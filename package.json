@@ -15,9 +15,9 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/primitives/index.js",
+      "types": "./src/primitives/types.d.ts",
       "require": "./dist/primitives/index.js",
-      "types": "./dist/primitives/types.d.ts"
+      "import": "./dist/primitives/index.js"
     },
     "./*": "./dist/primitives*.js"
   },
