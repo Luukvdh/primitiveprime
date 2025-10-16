@@ -1,6 +1,6 @@
 {
   "name": "primitiveprimer",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Bluntly Extend String, Array, Number, Object prototypes like a proto-caveman",
   "keywords": [
     "prototype",
@@ -18,13 +18,11 @@
       "require": "./dist/primitives/primitives.js",
       "types": "./dist/primitives/types.d.ts"
     },
-     "./*": "./dist/*.js"
+    "./*": "./dist/*.js"
   },
   "files": [
-
     "dist/primitives"
   ],
-
   "homepage": "https://github.com/Luukvdh/primitive-primer#readme",
   "bugs": {
     "url": "https://github.com/Luukvdh/primitive-primer/issues"
