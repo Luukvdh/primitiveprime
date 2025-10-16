@@ -1,6 +1,6 @@
 {
   "name": "primitiveprimer",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Bluntly Extend String, Array, Number, Object prototypes like a proto-caveman",
   "type": "module",
   "keywords": [
