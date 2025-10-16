@@ -7,20 +7,19 @@ import { mathUtils } from "./math.js";
 import { createBrowserPathShim } from "./pathShim.js";
 export { applyPrimitives } from "./primitives.js";
 
-export default function applyPrimitivesGlobally() {
+export function applyPrimitivesGlobally() {
   // --- Prototypes ---
   extendString();
   extendArray();
   extendNumber();
   extendObject();
-
+  (globalThis as any).MathUtils = mathUtils;
   if (typeof self === "undefined") {
     return;
   }
   // --- DOMUtils ---
   if (!(globalThis as any).DOMUtils) {
     (globalThis as any).DOMUtils = DOMUtils;
-    (globalThis as any).MathUtils = mathUtils;
   }
 
   // --- pathShim ---
