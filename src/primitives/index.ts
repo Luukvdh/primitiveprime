@@ -5,14 +5,18 @@ import { extendObject } from "./object.js";
 import { DOMUtils } from "./domutils.js";
 import { mathUtils } from "./math.js";
 import { createBrowserPathShim } from "./pathShim.js";
+export { applyPrimitives } from "./primitives.js";
 
-export function applyPrimitivesGlobally() {
+export default function applyPrimitivesGlobally() {
   // --- Prototypes ---
   extendString();
   extendArray();
   extendNumber();
   extendObject();
 
+  if (typeof self === "undefined") {
+    return;
+  }
   // --- DOMUtils ---
   if (!(globalThis as any).DOMUtils) {
     (globalThis as any).DOMUtils = DOMUtils;

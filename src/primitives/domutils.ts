@@ -1,5 +1,4 @@
 export const DOMUtils = {
-
   dom: {} as Record<string, HTMLElement>,
 
   initIDs() {
@@ -26,12 +25,14 @@ export const DOMUtils = {
     return size;
   },
 };
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => DOMUtils.initIDs());
-} else {
-  DOMUtils.initIDs();
-}
+if (typeof self !== "undefined") {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => DOMUtils.initIDs());
+  } else {
+    DOMUtils.initIDs();
+  }
 
-if (!(globalThis as any).DOMUtils) {
-  (globalThis as any).DOMUtils = DOMUtils;
+  if (!(globalThis as any).DOMUtils) {
+    (globalThis as any).DOMUtils = DOMUtils;
+  }
 }

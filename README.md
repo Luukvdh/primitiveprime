@@ -1,6 +1,6 @@
 # prototypeExtensions
-Extend String, Array, Number, Object with generally usefull or outright genious functions. Use NodeJS' 'path' functions in the browser;
----
+
+## Extend String, Array, Number, Object with generally usefull or outright genious functions. Use NodeJS' 'path' functions in the browser;
 
 ## Available Functions
 
@@ -91,11 +91,3 @@ lerp(min, max, t)
 mapRange(value, inMin, inMax, outMin, outMax)
 
 ---
-
-## Installation
-
-Simply copy the `installPrototypes.js` file into your project:
-
-```js
-import installPrototypes from './installPrototypes.js';
-installPrototypes();

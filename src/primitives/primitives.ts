@@ -1,7 +1,7 @@
-import { extendArray } from "./array";
-import { extendNumber } from "./number";
-import { extendObject } from "./object";
-import { extendString } from "./string";
+import { extendArray } from "./array.js";
+import { extendNumber } from "./number.js";
+import { extendObject } from "./object.js";
+import { extendString } from "./string.js";
 
 // --- apply all prototypes ---
 export function applyPrimitives() {
@@ -10,7 +10,6 @@ export function applyPrimitives() {
   extendObject();
   extendString();
 }
-
 // --- DOMUtils singleton ---
 export const DOMUtils = {
   dom: {} as Record<string, HTMLElement>,
