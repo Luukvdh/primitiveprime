@@ -1,6 +1,6 @@
 {
   "name": "primitiveprimer",
-  "version": "2.4.0",
+  "version": "2.9.1",
   "description": "Bluntly Extend String, Array, Number, Object prototypes like a proto-caveman",
   "type": "module",
   "keywords": [
@@ -15,14 +15,14 @@
   ],
   "exports": {
     ".": {
-      "types": "./src/primitives/types.d.ts",
-      "require": "./dist/primitives/index.js",
-      "import": "./dist/primitives/index.js"
+      "types": "./src/types.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.js"
     },
-    "./*": "./dist/primitives*.js"
+    "./*": "./dist*.js"
   },
   "files": [
-    "dist/primitives/**"
+    "dist/**"
   ],
   "homepage": "https://github.com/Luukvdh/primitive-primer#readme",
   "bugs": {
@@ -34,8 +34,8 @@
   },
   "license": "MIT",
   "author": "Luuk van den Hoogen",
-  "main": "dist/primitives/index.js",
-  "types": "dist/primitives/primitives.d.ts",
+  "main": "dist/index.js",
+  "types": "dist.d.ts",
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
@@ -44,5 +44,5 @@
   "devDependencies": {
     "typescript": "^5.3.0"
   },
-  "module": "dist/primitives/index.js"
+  "module": "dist/index.js"
 }
