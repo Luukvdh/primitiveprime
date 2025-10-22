@@ -1,29 +1,9 @@
-import { extendString } from "./string.js";
-import { extendArray } from "./array.js";
-import { extendNumber } from "./number.js";
-import { extendObject } from "./object.js";
-import { DOMUtils } from "./domutils.js";
-import { mathUtils } from "./math.js";
-import { createBrowserPathShim } from "./pathShim.js";
-export { applyPrimitives } from "./primitives.js";
+// Waarom: centraliseer side-effectful entry (voert alle polyfills/prototype-extensies uit).
+export * from "./primitives.js"; // if you have pure helpers, re-export here
+export * from "./math.js";
 
-export function applyPrimitivesGlobally() {
-  // --- Prototypes ---
-  extendString();
-  extendArray();
-  extendNumber();
-  extendObject();
-  (globalThis as any).MathUtils = mathUtils;
-  if (typeof self === "undefined") {
-    return;
-  }
-  // --- DOMUtils ---
-  if (!(globalThis as any).DOMUtils) {
-    (globalThis as any).DOMUtils = DOMUtils;
-  }
-
-  // --- pathShim ---
-  if (!(globalThis as any).path) {
-    (globalThis as any).path = createBrowserPathShim();
-  }
-}
+import "./polyfills.js";
+import "./string.js";
+import "./array.js";
+import "./number.js";
+import "./object.js";
