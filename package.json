@@ -1,1 +1,65 @@
-{"name":"primitiveprimer","version":"2.10.1","description":"Bluntly extend String, Array, Number, Object prototypes like a proto-caveman","type":"module","sideEffects":true,"keywords":["prototype","extensions","domutils","math","string","array","number","object"],"exports":{".":{"types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs"}},"main":"./dist/index.cjs","module":"./dist/index.js","types":"./dist/index.d.ts","unpkg":"./dist/index.global.min.js","jsdelivr":"./dist/index.global.min.js","files":["dist/**","README.md","LICENSE"],"homepage":"https://github.com/Luukvdh/primitive-primer#readme","bugs":{"url":"https://github.com/Luukvdh/primitive-primer/issues"},"repository":{"type":"git","url":"git+https://github.com/Luukvdh/primitive-primer.git"},"license":"MIT","author":"Luuk van den Hoogen","scripts":{"clean":"rimraf dist","build":"tsup src/index.ts --dts --format esm,cjs,iife --global-name PrimitivePrimer --minify --sourcemap --out-dir dist","dev":"tsup src/index.ts --dts --format esm,cjs,iife --global-name PrimitivePrimer --out-dir dist --watch","typecheck":"tsc -p tsconfig.json --noEmit","prepublishOnly":"npm run clean; npm run typecheck; npm run build"},"devDependencies":{"rimraf":"^6.0.1","tsup":"^8.5.0","typescript":"^5.9.3"}}
+{
+  "name": "primitiveprimer",
+  "version": "2.10.1",
+  "description": "Bluntly extend String, Array, Number, Object prototypes like a proto-caveman",
+  "type": "module",
+  "sideEffects": true,
+  "keywords": [
+    "prototype",
+    "extensions",
+    "domutils",
+    "math",
+    "string",
+    "array",
+    "number",
+    "object"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./index.d.ts",
+  "unpkg": "./dist/index.global.js",
+  "jsdelivr": "./dist/index.global.js",
+  "files": [
+    "dist/**",
+    "public/**",
+    "bin/**",
+    "index.d.ts",
+    "global.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "homepage": "https://github.com/Luukvdh/primitive-primer#readme",
+  "bugs": {
+    "url": "https://github.com/Luukvdh/primitive-primer/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Luukvdh/primitive-primer.git"
+  },
+  "license": "MIT",
+  "author": "Luuk van den Hoogen",
+  "bin": {
+    "primitiveprimer-copy": "./bin/primitiveprimer-copy.cjs"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsup src/index.ts --dts --format esm,cjs,iife --global-name PrimitivePrimer --minify --sourcemap --out-dir dist",
+    "dev": "tsup src/index.ts --dts --format esm,cjs,iife --global-name PrimitivePrimer --out-dir dist --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "npm run build",
+    "copy:public": "node ./bin/primitiveprimer-copy.cjs",
+    "pp:copy": "primitiveprimer-copy --flat --clean"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  }
+}
