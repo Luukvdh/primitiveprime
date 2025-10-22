@@ -10,6 +10,12 @@ export function applyPrimitives() {
   extendObject();
   extendString();
 }
+export function applyPrimitivesGlobally() {
+  extendArray();
+  extendNumber();
+  extendObject();
+  extendString();
+}
 // --- DOMUtils singleton ---
 export const DOMUtils = {
   dom: {} as Record<string, HTMLElement>,
