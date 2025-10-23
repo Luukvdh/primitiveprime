@@ -1,17 +1,24 @@
-// src/primitives/index.d.ts
+// src/primitives/primitives.d.ts
 export {};
 
 declare global {
+  // ─── ARRAY PROTOTYPE ──────────────────────────────────────────────────────────
   interface Array<T> {
     first(n?: number): T | T[];
     last(n?: number): T | T[];
     unique(): T[];
     shuffle(): T[];
     sumByKey(key: string): number;
-    findByKey(key: string, value: any): any;
-    // … alle andere array methods
+    findByKey(key: string, value: any): T | null;
+    autoParseKeys(): T[];
+    highestByKey(key: string): T | null;
+    lowestByKey(key: string): T | null;
+    sortByKey(key: string, ascending?: boolean): T[];
+    sortByKeyName(key: string, ascending?: boolean): T[];
+    groupBy(fn: (item: T) => string): Record<string, T[]>;
   }
 
+  // ─── STRING PROTOTYPE ─────────────────────────────────────────────────────────
   interface String {
     toHsp(): string;
     reverse(): string;
@@ -34,6 +41,7 @@ declare global {
     substringFrom(startStr?: string, stopStr?: string): string;
   }
 
+  // ─── NUMBER PROTOTYPE ─────────────────────────────────────────────────────────
   interface Number {
     percentage(percent: number): number;
     isEven(): boolean;
@@ -46,6 +54,7 @@ declare global {
     toTimeCode(): string;
   }
 
+  // ─── OBJECT STATIC + INSTANCE ─────────────────────────────────────────────────
   interface ObjectConstructor {
     keysMap(obj: Record<string, any>, fn: (k: string, v: any) => [string, any]): Record<string, any>;
     valuesMap(obj: Record<string, any>, fn: (v: any, k: string) => any): Record<string, any>;
@@ -56,6 +65,7 @@ declare global {
     sortKeys(sorterFn?: ((a: string, b: string) => number) | null): Record<string, any>;
   }
 
+  // ─── MATH EXTENSIONS ──────────────────────────────────────────────────────────
   interface Math {
     randomRangeFloat(min: number, max: number): number;
     randomRangeInt(min: number, max: number): number;
@@ -72,4 +82,20 @@ declare global {
     mix(x: number, y: number, a: number): number;
     mixColors(hex1: string, hex2: string, mixPerc: number): string;
   }
+
+  // ─── GLOBAL HELPERS (zoals DOMUtils, pathShim) ────────────────────────────────
+  var DOMUtils: {
+    dom: Record<string, HTMLElement>;
+    initIDs(): void;
+    measureElement(el: HTMLElement): { width: number; height: number };
+  };
+
+  var path: {
+    sep: string;
+    normalize(p: string): string;
+    join(...parts: string[]): string;
+    basename(p: string): string;
+    dirname(p: string): string;
+    extname(p: string): string;
+  };
 }
