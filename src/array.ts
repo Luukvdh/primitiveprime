@@ -15,6 +15,14 @@ export function extendArray() {
     return null;
   });
 
+  addToPrototype(Array.prototype, "groupBy", function (this: any[], fn: (item: any) => string): Record<string, any[]> {
+    return this.reduce((acc: any, item) => {
+      const key = typeof fn === "function" ? fn(item) : item[fn];
+      (acc[key] ||= []).push(item);
+      return acc;
+    }, {});
+  });
+
   addToPrototype(Array.prototype, "sumByKey", function <T extends Record<string, any>>(this: T[], key: string): number {
     return this.reduce((acc, item) => acc + (typeof item[key] === "number" ? item[key] : 0), 0);
   });
@@ -73,3 +81,6 @@ export function extendArray() {
     });
   });
 }
+addToPrototype(Array.prototype, "mapByKey", function <T extends Record<string, any>, K extends keyof T>(this: T[], key: K): Array<T[K]> {
+  return this.map((item) => (item && typeof item === "object" ? item[key] : undefined)) as Array<T[K]>;
+});

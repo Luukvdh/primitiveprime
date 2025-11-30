@@ -24,13 +24,13 @@ export function extendObject() {
     return obj;
   });
 
-  // --- ARRAY prototype ---
-  addToPrototype(Array.prototype, "groupBy", function (this: any[], fn: (item: any) => string): Record<string, any[]> {
-    return this.reduce((acc: any, item) => {
-      const key = typeof fn === "function" ? fn(item) : item[fn];
-      (acc[key] ||= []).push(item);
-      return acc;
-    }, {});
+  addToPrototype(Object, "fill", function <T extends Record<string, any>, U extends Record<string, any>>(target: T, source: U): T & U {
+    for (const [key, value] of Object.entries(source)) {
+      if (!(key in target)) {
+        (target as any)[key] = value;
+      }
+    }
+    return target as T & U;
   });
 
   // --- OBJECT instance ---
