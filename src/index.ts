@@ -3,9 +3,9 @@
 export { applyPrimitives, applyPrimitivesGlobally } from "./primitives.js"; // if you have pure helpers, re-export here
 export * from "./primitives.js"; // if you have pure helpers, re-export here
 export * from "./math.js";
+export * from "./primitive-tools.js";
 import "./polyfills.js";
 import "./string.js";
 import "./array.js";
 import "./number.js";
-import "./object.js";
 import "./object.js";

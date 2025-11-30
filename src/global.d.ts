@@ -59,6 +59,7 @@ declare global {
     keysMap(obj: Record<string, any>, fn: (k: string, v: any) => [string, any]): Record<string, any>;
     valuesMap(obj: Record<string, any>, fn: (v: any, k: string) => any): Record<string, any>;
     parseKeys(this: Record<string, any>, ...keys: string[]): Record<string, any>;
+    fill<T extends Record<string, any>, U extends Record<string, any>>(target: T, source: U): T & U;
   }
 
   interface Object {
