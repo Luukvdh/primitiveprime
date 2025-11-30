@@ -1,6 +1,6 @@
 {
   "name": "primitiveprimer",
-  "version": "2.10.7",
+  "version": "2.10.9",
   "description": "Bluntly extend String, Array, Number, Object prototypes like a proto-caveman",
   "type": "module",
   "sideEffects": true,
@@ -20,11 +20,7 @@
       "import": "./dist/primitiveprimer.js",
       "require": "./dist/primitiveprimer.cjs"
     },
-    "./browser": {
-      "types": "./dist/primitive-tools.browser.d.ts",
-      "import": "./dist/primitive-tools.browser.mjs",
-      "default": "./dist/primitive-tools.browser.mjs"
-    }
+    "./browser": "./dist/primitive-tools.browser.js"
   },
   "main": "./dist/primitiveprimer.cjs",
   "module": "./dist/primitiveprimer.js",
@@ -34,6 +30,7 @@
   "files": [
     "dist/**",
     "public/**",
+    "bin/**",
     "index.d.ts",
     "global.d.ts",
     "README.md",
@@ -49,11 +46,14 @@
   },
   "license": "MIT",
   "author": "Luuk van den Hoogen",
+  "bin": {
+    "primitiveprimer-copy-browser": "./bin/copy-browser.js"
+  },
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run build:main && npm run build:browser",
     "build:main": "tsup src/index.ts --entry.primitiveprimer=src/index.ts --dts --format esm,cjs,iife --global-name PrimitivePrimer --minify --sourcemap --out-dir dist",
-    "build:browser": "tsup src/primitive-tools.ts --entry.primitivetools=src/primitive-tools.ts browser=src/primitive-tools.ts --format esm --minify --sourcemap --out-dir dist",
+    "build:browser": "tsup --config tsup.browser.config.ts",
     "dev": "tsup src/index.ts --entry.primitiveprimer=src/index.ts --dts --format esm,cjs,iife --global-name PrimitivePrimer --out-dir dist --watch",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "prepublishOnly": "npm run build"

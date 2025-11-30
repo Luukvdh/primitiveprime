@@ -38,6 +38,73 @@ IIFE global (CDN):
 </script>
 ```
 
+### Browser-only build (pkit)
+
+For a lightweight browser-only build with just the functional helpers (no prototype pollution), use the `pkit` browser bundle:
+
+**Option 1: Via CDN**
+
+```html
+<script src="https://unpkg.com/primitiveprimer/dist/primitive-tools.browser.js"></script>
+<script>
+  // pkit is now available globally
+  const result = pkit("hello world").toTitleCase().unwrap(); // "Hello World"
+  console.log(pkit.math.randomRangeInt(1, 10));
+  console.log(pkit.path.basename("/path/to/file.txt"));
+</script>
+```
+
+**Option 2: Copy to your public folder**
+
+If you've installed via npm and want to serve the file locally:
+
+```bash
+# Using the built-in copy command (easiest)
+npx primitiveprimer-copy-browser
+# copies to ./public by default
+
+# Or specify a custom directory
+npx primitiveprimer-copy-browser public/vendor
+
+# Manual copy (Windows PowerShell)
+Copy-Item node_modules/primitiveprimer/dist/primitive-tools.browser.* public/
+
+# Manual copy (macOS/Linux)
+cp node_modules/primitiveprimer/dist/primitive-tools.browser.* public/
+
+# Or add to package.json scripts:
+# "postinstall": "primitiveprimer-copy-browser"
+```
+
+Then use:
+
+```html
+<script src="/primitive-tools.browser.js"></script>
+```
+
+**Option 3: Using a bundler (Vite, Webpack, etc.)**
+
+Most bundlers can copy files from node_modules. For Vite, use `vite-plugin-static-copy`:
+
+```js
+// vite.config.js
+import { defineConfig } from "vite";
+import { viteStaticCopy } from "vite-plugin-static-copy";
+
+export default defineConfig({
+  plugins: [
+    viteStaticCopy({
+      targets: [
+        {
+          src: "node_modules/primitiveprimer/dist/primitive-tools.browser.js",
+          dest: ".",
+        },
+      ],
+    }),
+  ],
+});
+```
+
 ## Copying public assets into your app's /public
 
 If you want to ship or customize static assets (e.g., vendored files) from this package into your app's `./public` folder, use the provided CLI.

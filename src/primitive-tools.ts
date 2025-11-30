@@ -1,8 +1,5 @@
 /* eslint-disable no-redeclare */
 // primitive-tools.ts
-
-import { basename, dirname, extname } from "path/win32";
-
 // ---------- TYPES ----------
 
 export interface PrimeString {
@@ -575,6 +572,9 @@ const pkit = pkitImpl as Pkit;
 // koppel de namespaces:
 pkit.math = mathUtils;
 pkit.path = pathkit;
+
+// eventueel named exports laten bestaan (handig als je ze los wilt importeren)
+export { mathUtils as mathkit, pathkit };
 
 // en dit is nu je default:
 export default pkit;
