@@ -9,15 +9,15 @@ const __dirname = dirname(__filename);
 const args = process.argv.slice(2);
 const destDir = args[0] || 'public';
 
-const sourceFile = join(__dirname, '..', 'dist', 'primitive-tools.browser.js');
-const sourceMap = join(__dirname, '..', 'dist', 'primitive-tools.browser.js.map');
+const sourceFile = join(__dirname, '..', 'dist', 'primitivetools.browser.js');
+const sourceMap = join(__dirname, '..', 'dist', 'primitivetools.browser.js.map');
 
 if (!existsSync(destDir)) {
   mkdirSync(destDir, { recursive: true });
 }
 
-const destFile = join(destDir, 'primitive-tools.browser.js');
-const destMap = join(destDir, 'primitive-tools.browser.js.map');
+const destFile = join(destDir, 'primitivetools.browser.js');
+const destMap = join(destDir, 'primitivetools.browser.js.map');
 
 try {
   copyFileSync(sourceFile, destFile);

@@ -1,6 +1,6 @@
 {
   "name": "primitiveprimer",
-  "version": "2.10.9",
+  "version": "2.11.0",
   "description": "Bluntly extend String, Array, Number, Object prototypes like a proto-caveman",
   "type": "module",
   "sideEffects": true,
@@ -20,7 +20,7 @@
       "import": "./dist/primitiveprimer.js",
       "require": "./dist/primitiveprimer.cjs"
     },
-    "./browser": "./dist/primitive-tools.browser.js"
+    "./browser": "./dist/primitivetools.browser.js"
   },
   "main": "./dist/primitiveprimer.cjs",
   "module": "./dist/primitiveprimer.js",
@@ -33,6 +33,7 @@
     "bin/**",
     "index.d.ts",
     "global.d.ts",
+    "browser.d.ts",
     "README.md",
     "LICENSE"
   ],

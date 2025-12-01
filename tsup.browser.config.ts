@@ -1,9 +1,10 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/primitive-tools.ts"],
+  entry: ["src/primitivetools.ts"],
   format: ["iife"],
   globalName: "pkit",
+  dts: true,
   minify: true,
   sourcemap: true,
   outDir: "dist",

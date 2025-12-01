@@ -45,13 +45,34 @@ For a lightweight browser-only build with just the functional helpers (no protot
 **Option 1: Via CDN**
 
 ```html
-<script src="https://unpkg.com/primitiveprimer/dist/primitive-tools.browser.js"></script>
+<script src="https://unpkg.com/primitiveprimer/dist/primitivetools.browser.js"></script>
 <script>
   // pkit is now available globally
   const result = pkit("hello world").toTitleCase().unwrap(); // "Hello World"
   console.log(pkit.math.randomRangeInt(1, 10));
   console.log(pkit.path.basename("/path/to/file.txt"));
 </script>
+```
+
+**TypeScript support for browser bundle:**
+
+To get full IntelliSense/autocomplete when using the browser bundle in TypeScript projects:
+
+```typescript
+// Add to your TypeScript file:
+/// <reference types="primitiveprimer/browser" />
+
+// Or add to tsconfig.json:
+{
+  "compilerOptions": {
+    "types": ["primitiveprimer/browser"]
+  }
+}
+
+// Now pkit has full type support:
+pkit("hello").toTitleCase().unwrap(); // ✓ autocomplete works!
+pkit(42).percentage(50); // ✓ autocomplete works!
+pkit([1, 2, 3]).shuffle(); // ✓ autocomplete works!
 ```
 
 **Option 2: Copy to your public folder**
@@ -67,10 +88,10 @@ npx primitiveprimer-copy-browser
 npx primitiveprimer-copy-browser public/vendor
 
 # Manual copy (Windows PowerShell)
-Copy-Item node_modules/primitiveprimer/dist/primitive-tools.browser.* public/
+Copy-Item node_modules/primitiveprimer/dist/primitivetools.browser.* public/
 
 # Manual copy (macOS/Linux)
-cp node_modules/primitiveprimer/dist/primitive-tools.browser.* public/
+cp node_modules/primitiveprimer/dist/primitivetools.browser.* public/
 
 # Or add to package.json scripts:
 # "postinstall": "primitiveprimer-copy-browser"
@@ -79,7 +100,7 @@ cp node_modules/primitiveprimer/dist/primitive-tools.browser.* public/
 Then use:
 
 ```html
-<script src="/primitive-tools.browser.js"></script>
+<script src="/primitivetools.browser.js"></script>
 ```
 
 **Option 3: Using a bundler (Vite, Webpack, etc.)**
@@ -96,7 +117,7 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: "node_modules/primitiveprimer/dist/primitive-tools.browser.js",
+          src: "node_modules/primitiveprimer/dist/primitivetools.browser.js",
           dest: ".",
         },
       ],

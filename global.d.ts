@@ -1,6 +1,14 @@
+import { Pkit } from "./browser";
+
 export {};
 
 declare global {
+  /**
+   * Global pkit function - available when using the browser bundle
+   * Include via: <script src="https://unpkg.com/primitiveprimer/dist/primitivetools.browser.js"></script>
+   */
+  var pkit: Pkit;
+
   interface Array<T> {
     first(n?: number): T | T[];
     last(n?: number): T | T[];

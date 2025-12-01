@@ -3,7 +3,7 @@
 export { applyPrimitives, applyPrimitivesGlobally } from "./primitives.js"; // if you have pure helpers, re-export here
 export * from "./primitives.js"; // if you have pure helpers, re-export here
 export * from "./math.js";
-export * from "./primitive-tools.js";
+export * from "./primitivetools.js";
 import "./polyfills.js";
 import "./string.js";
 import "./array.js";
