@@ -1,6 +1,6 @@
 {
   "name": "primitiveprimer",
-  "version": "2.11.11",
+  "version": "2.11.12",
   "description": "Bluntly extend String, Array, Number, Object prototypes like a proto-caveman",
   "type": "module",
   "sideEffects": true,
@@ -42,13 +42,13 @@
     "README.md",
     "LICENSE"
   ],
-  "homepage": "https://github.com/Luukvdh/primitive-primer#readme",
+  "homepage": "https://github.com/Luukvdh/primitiveprime#readme",
   "bugs": {
-    "url": "https://github.com/Luukvdh/primitive-primer/issues"
+    "url": "https://github.com/Luukvdh/primitiveprime/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Luukvdh/primitive-primer.git"
+    "url": "git+https://github.com/Luukvdh/primitiveprime.git"
   },
   "license": "MIT",
   "author": "Luuk van den Hoogen",
