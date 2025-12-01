@@ -78,7 +78,7 @@ CommonJS:
 ```js
 const pkit = require("primitiveprimer/tools").default;
 
-console.log(pkit([1,2,3]).shuffle());
+console.log(pkit([1, 2, 3]).shuffle());
 ```
 
 TypeScript types for `./tools` are included automatically; no extra configuration required.
@@ -94,8 +94,8 @@ const value: string | null | undefined = getMaybeValue();
 pkit.attest.notNil(value); // narrows to string
 console.log(value.toUpperCase());
 
-pkit.attest.lengthAtLeast([1,2], 2); // narrows to number[]
-pkit.attest.jsonCompare({a:1}, {a:1}); // asserts structural equality
+pkit.attest.lengthAtLeast([1, 2], 2); // narrows to number[]
+pkit.attest.jsonCompare({ a: 1 }, { a: 1 }); // asserts structural equality
 ```
 
 ### Parsing JSON-like properties in objects
@@ -105,7 +105,7 @@ For rows fetched from e.g. SQLite that store JSON as strings, auto-parse object 
 ```ts
 import pkit from "primitiveprimer/tools";
 
-const row = { id: "1", meta: "{\"tags\":[\"a\",\"b\"]}", ok: "true" };
+const row = { id: "1", meta: '{"tags":["a","b"]}', ok: "true" };
 const parsed = pkit(row).autoParseKeys().unwrap();
 // → { id: "1", meta: { tags: ["a","b"] }, ok: true }
 ```
@@ -113,7 +113,7 @@ const parsed = pkit(row).autoParseKeys().unwrap();
 Arrays of rows also support auto-parse:
 
 ```ts
-const rows = [{ data: "{\"x\":1}" }, { data: "{\"x\":2}" }];
+const rows = [{ data: '{"x":1}' }, { data: '{"x":2}' }];
 const parsedRows = pkit(rows).autoParseKeys().unwrap();
 ```
 
