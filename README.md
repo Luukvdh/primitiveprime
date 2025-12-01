@@ -1,6 +1,11 @@
 # primitiveprimer
 
-Extend String, Array, Number, Object with generally useful helpers, plus lightweight DOM utils and a browser-safe path shim. Ships ESM, CJS, and an IIFE global build (`PrimitivePrimer`).
+Extend String, Array, Number, Object with generally useful helpers, plus lightweight DOM utils and a browser-safe path shim.
+
+Two ways to use:
+
+- Primer (prototype extensions): opt-in patching of built-ins. Import from the package root and call `applyPrimitives()` (or `applyPrimitivesGlobally()`).
+- Tools (safe utilities): functional, no-patch API via `pkit`. Import with `primitiveprimer/tools` (ESM/CJS) or use the CDN browser global.
 
 ## Install
 
@@ -52,6 +57,64 @@ For a lightweight browser-only build with just the functional helpers (no protot
   console.log(pkit.math.randomRangeInt(1, 10));
   console.log(pkit.path.basename("/path/to/file.txt"));
 </script>
+```
+
+### Safe tools import (ESM/CJS)
+
+If you're in a module/bundler environment and prefer importing the safe tools API instead of a global, use the `./tools` subpath:
+
+ESM:
+
+```ts
+import pkit from "primitiveprimer/tools";
+
+console.log(pkit("hello world").toTitleCase().unwrap());
+console.log(pkit(42).percentage(50));
+console.log(pkit.path.basename("/path/to/file.txt"));
+```
+
+CommonJS:
+
+```js
+const pkit = require("primitiveprimer/tools").default;
+
+console.log(pkit([1,2,3]).shuffle());
+```
+
+TypeScript types for `./tools` are included automatically; no extra configuration required.
+
+### Assertions for TypeScript narrowing (attest)
+
+The safe tools include runtime assertions that use TS `asserts` to narrow types:
+
+```ts
+import pkit from "primitiveprimer/tools";
+
+const value: string | null | undefined = getMaybeValue();
+pkit.attest.notNil(value); // narrows to string
+console.log(value.toUpperCase());
+
+pkit.attest.lengthAtLeast([1,2], 2); // narrows to number[]
+pkit.attest.jsonCompare({a:1}, {a:1}); // asserts structural equality
+```
+
+### Parsing JSON-like properties in objects
+
+For rows fetched from e.g. SQLite that store JSON as strings, auto-parse object properties:
+
+```ts
+import pkit from "primitiveprimer/tools";
+
+const row = { id: "1", meta: "{\"tags\":[\"a\",\"b\"]}", ok: "true" };
+const parsed = pkit(row).autoParseKeys().unwrap();
+// → { id: "1", meta: { tags: ["a","b"] }, ok: true }
+```
+
+Arrays of rows also support auto-parse:
+
+```ts
+const rows = [{ data: "{\"x\":1}" }, { data: "{\"x\":2}" }];
+const parsedRows = pkit(rows).autoParseKeys().unwrap();
 ```
 
 **TypeScript support for browser bundle:**

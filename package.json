@@ -1,6 +1,6 @@
 {
   "name": "primitiveprimer",
-  "version": "2.11.0",
+  "version": "2.11.1",
   "description": "Bluntly extend String, Array, Number, Object prototypes like a proto-caveman",
   "type": "module",
   "sideEffects": true,
@@ -19,6 +19,11 @@
       "types": "./dist/primitiveprimer.d.ts",
       "import": "./dist/primitiveprimer.js",
       "require": "./dist/primitiveprimer.cjs"
+    },
+    "./tools": {
+      "types": "./dist/primitivetools.d.ts",
+      "import": "./dist/primitivetools.js",
+      "require": "./dist/primitivetools.cjs"
     },
     "./browser": "./dist/primitivetools.browser.js"
   },
@@ -52,8 +57,9 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run build:main && npm run build:browser",
+    "build": "npm run build:main && npm run build:tools && npm run build:browser",
     "build:main": "tsup src/index.ts --entry.primitiveprimer=src/index.ts --dts --format esm,cjs,iife --global-name PrimitivePrimer --minify --sourcemap --out-dir dist",
+    "build:tools": "tsup src/primitivetools.ts --entry.primitivetools=src/primitivetools.ts --dts --format esm,cjs --minify --sourcemap --out-dir dist",
     "build:browser": "tsup --config tsup.browser.config.ts",
     "dev": "tsup src/index.ts --entry.primitiveprimer=src/index.ts --dts --format esm,cjs,iife --global-name PrimitivePrimer --out-dir dist --watch",
     "typecheck": "tsc -p tsconfig.json --noEmit",
