@@ -1,7 +1,7 @@
 
 {
 "compilerOptions": {
-"target": "ES2022",
+"target": "ES2023",
 "module": "NodeNext",
 "moduleResolution": "nodenext",
 "strict": true,
@@ -9,7 +9,8 @@
 "declaration": true,
 "declarationMap": false,
 "esModuleInterop": true,
-"forceConsistentCasingInFileNames": true
+"forceConsistentCasingInFileNames": true,
 },
+"lib": ["ES2023"],
 "include": ["src"]
 }
