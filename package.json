@@ -1,6 +1,6 @@
 {
   "name": "primitiveprimer",
-  "version": "2.12.1",
+  "version": "2.12.2",
   "description": "Bluntly extend String, Array, Number, Object prototypes with useful methods, or use them as standalone utilities while leaving prototypes untouched",
   "type": "module",
   "sideEffects": true,
@@ -43,10 +43,7 @@
   "bugs": {
     "url": "https://github.com/Luukvdh/primitiveprime/issues"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Luukvdh/primitiveprime.git"
-  },
+  "repository": "https://github.com/Luukvdh/primitiveprime.git",
   "license": "MIT",
   "author": "Luuk van den Hoogen",
   "bin": {
