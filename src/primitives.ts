@@ -6,20 +6,12 @@ import pkit from "./primitivetools.js";
 export type { Pkit, PrimeString, PrimeNumber, PrimeArray, PrimeObject } from "./primitivetools.js";
 import { extendPath } from "./pathShim.js";
 import { extendMathUtils } from "./math.js";
-export class AssertError extends Error {
-  functionName: string;
-  constructor(message: string, functionName?: string) {
-    super(message);
-    this.name = "AssertError";
-    this.functionName = functionName ?? "";
-  }
-}
 // --- apply all prototypes ---
 export function applyPrimitives() {
+  extendString();
   extendArray();
   extendNumber();
   extendObject();
-  extendString();
   extendPath();
   extendMathUtils();
 }
