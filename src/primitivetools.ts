@@ -9,7 +9,7 @@
 // ---------- TYPES ----------
 
 export interface PrimeString {
-  setExt(ext: string): string;
+  changeExtension(ext: string): string;
   reverse(): string;
   toTitleCase(): string;
 
@@ -115,7 +115,7 @@ function createPrimeString(value: string): PrimeString {
   const current = value;
 
   return {
-    setExt(ext: string) {
+    changeExtension(ext: string) {
       if (!ext) {
         return current;
       }

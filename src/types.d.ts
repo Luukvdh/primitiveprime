@@ -1,12 +1,21 @@
 // src/primitives/index.d.ts
 interface Array<T> {
-  first(n?: number): T | T[];
-  last(n?: number): T | T[];
+  first(n?: 1): T | undefined;
+  first(n: number): T[];
+  last(n?: 1): T | undefined;
+  last(n: number): T[];
+  findByKey<K extends keyof T & string>(key: K, value: any): T | null;
+  groupBy(fn: (item: T) => string): Record<string, T[]>;
+  groupBy<K extends keyof T & string>(key: K): Record<string, T[]>;
+  sumByKey<K extends keyof T & string>(key: K): number;
+  autoParseKeys(): T[];
   unique(): T[];
   shuffle(): T[];
-  sumByKey(key: string): number;
-  findByKey(key: string, value: any): any;
-  // … alle andere array methods
+  highestByKey<K extends keyof T & string>(key: K): T | null;
+  lowestByKey<K extends keyof T & string>(key: K): T | null;
+  sortByKey<K extends keyof T & string>(key: K, ascending?: boolean): T[];
+  sortByKeyName<K extends keyof T & string>(key: K, ascending?: boolean): T[];
+  mapByKey<K extends keyof T & string>(key: K): Array<T[K]>;
 }
 
 interface String {
@@ -51,6 +60,7 @@ interface ObjectConstructor {
 
 interface Object {
   sortKeys(sorterFn?: ((a: string, b: string) => number) | null): Record<string, any>;
+  fill(value: any): Record<string, any>;
 }
 
 interface Math {
