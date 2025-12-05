@@ -37,7 +37,7 @@ const { applyPrimitives, pkit } = require("primitiveprimer");
 applyPrimitives();
 
 //or to auto-deploy prototypes:
-import "primitiveprimer/global"; // runs the bundle that auto-applies prototypes
+require("primitiveprimer/global")
 
 // now String/Array/Number/Object have extra helpers
 ```
