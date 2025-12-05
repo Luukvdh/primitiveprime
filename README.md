@@ -27,9 +27,6 @@ import "primitiveprimer/global"; // runs the bundle that auto-applies prototypes
 
 // now String/Array/Number/Object have extra helpers
 ```
-
-or import the self-deploying version to auto-extend prototypes
-
 CommonJS (Node.js):
 
 ```js
@@ -43,7 +40,6 @@ require("primitiveprimer/global")
 ```
 
 CDN (IIFE):
-.global deploys prototypes automatically, default version places applyPrimitives() and pkit() on globalThis/Window.
 
 ```html
 <script src="primitiveprimer.js"></script>
@@ -51,7 +47,7 @@ CDN (IIFE):
   applyPrimitives(); // opt-in;
   pkit("test.mp4").changeExtention("mp3"); // get functions via pkit();
 </script>
-OR
+<!-- OR FOR AUTOMATIC DEPLOYMENT OF PROTOTYPES: -->
 <script src="primitiveprimer.global.js"></script>
 <!-- prototypes are applied automatically -->
 ```
