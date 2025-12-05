@@ -57,7 +57,7 @@ export function extendMathUtils() {
   if (!(globalThis as any).mathUtils) {
     (globalThis as any).mathUtils = mathUtils;
   }
-  if (typeof window !== undefined) {
-    Object.assign(window, { mathUtils });
+  if (typeof (globalThis as any).window !== "undefined") {
+    Object.assign((globalThis as any).window, { mathUtils });
   }
 }

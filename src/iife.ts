@@ -11,10 +11,10 @@ const applyPrimitives = applyPrimitivesGlobally;
 // Also mirror to window if present
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-if (typeof window !== "undefined") {
+if (typeof (globalThis as any).window !== "undefined") {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  Object.assign(window, { applyPrimitives, pkit });
+  Object.assign((globalThis as any).window, { applyPrimitives, pkit });
 }
 
 // Provide a default export to satisfy IIFE globalName if needed

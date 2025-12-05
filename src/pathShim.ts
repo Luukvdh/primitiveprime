@@ -23,8 +23,8 @@ function createBrowserPathShim() {
   };
 }
 export function extendPath() {
-  if (typeof window === "undefined") return;
-  if (!(globalThis as any).path) {
-    (globalThis as any).path = createBrowserPathShim();
+  if (typeof (globalThis as any).window === "undefined") return;
+  if (!(globalThis as any).window?.path) {
+    (globalThis as any).window.path = createBrowserPathShim();
   }
 }
