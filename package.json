@@ -1,6 +1,6 @@
 {
   "name": "primitiveprimer",
-  "version": "2.12.3",
+  "version": "2.12.4",
   "description": "Bluntly extend String, Array, Number, Object prototypes with useful methods, or use them as standalone utilities while leaving prototypes untouched",
   "type": "module",
   "sideEffects": true,
@@ -36,8 +36,7 @@
     "index.d.ts",
     "global.d.ts",
     "browser.d.ts",
-    "README.md",
-    "LICENSE"
+    "README.md"
   ],
   "homepage": "https://github.com/Luukvdh/primitiveprime#readme",
   "bugs": {

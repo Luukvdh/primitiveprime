@@ -2,7 +2,7 @@ export {};
 
 declare global {
   // Globals exposed by IIFE bundles
-  var pkit: import("./src/primitives.ts").Pkit;
+  var pkit: import("./dist/primitiveprimer").Pkit;
   var applyPrimitives: () => void;
 
   interface Array<T> {
