@@ -46,15 +46,17 @@ CDN (IIFE):
 .global deploys prototypes automatically, default version places applyPrimitives() and pkit() on globalThis/Window.
 
 ```html
-<script src="https://unpkg.com/primitiveprimer"></script>
+<script src="primitiveprimer.js"></script>
 <script>
   applyPrimitives(); // opt-in;
   pkit("test.mp4").changeExtention("mp3"); // get functions via pkit();
 </script>
 OR
-<script src="https://unpkg.com/primitiveprimer/dist/primitiveprimer.global.js"></script>
+<script src="primitiveprimer.global.js"></script>
 <!-- prototypes are applied automatically -->
 ```
+these are also available at https://unpkg.com/primitiveprimer
+
 # Available Functions
 
 ```typescript
