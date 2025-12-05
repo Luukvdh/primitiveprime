@@ -1,21 +1,25 @@
-import { Pkit } from "./browser";
-
 export {};
 
 declare global {
-  /**
-   * Global pkit function - available when using the browser bundle
-   * Include via: <script src="https://unpkg.com/primitiveprimer/dist/primitivetools.browser.js"></script>
-   */
-  var pkit: Pkit;
+  // Globals exposed by IIFE bundles
+  var pkit: import("./src/primitives.ts").Pkit;
+  var applyPrimitives: () => void;
 
   interface Array<T> {
     first(n?: number): T | T[];
     last(n?: number): T | T[];
+    findByKey<K extends keyof T & string>(key: K, value: any): T | null;
+    groupBy(fn: (item: T) => string): Record<string, T[]>;
+    groupBy<K extends keyof T & string>(key: K): Record<string, T[]>;
+    sumByKey<K extends keyof T & string>(key: K): number;
+    autoParseKeys(): T[];
     unique(): T[];
     shuffle(): T[];
-    sumByKey(key: string): number;
-    findByKey(key: string, value: any): any;
+    highestByKey<K extends keyof T & string>(key: K): T | null;
+    lowestByKey<K extends keyof T & string>(key: K): T | null;
+    sortByKey<K extends keyof T & string>(key: K, ascending?: boolean): T[];
+    sortByKeyName<K extends keyof T & string>(key: K, ascending?: boolean): T[];
+    mapByKey<K extends keyof T & string>(key: K): Array<T[K]>;
   }
 
   interface String {
@@ -56,13 +60,24 @@ declare global {
     keysMap(obj: Record<string, any>, fn: (k: string, v: any) => [string, any]): Record<string, any>;
     valuesMap(obj: Record<string, any>, fn: (v: any, k: string) => any): Record<string, any>;
     parseKeys(this: Record<string, any>, ...keys: string[]): Record<string, any>;
+    fill<T extends Record<string, any>, U extends Record<string, any>>(target: T, source: U): T & U;
   }
 
   interface Object {
     sortKeys(sorterFn?: ((a: string, b: string) => number) | null): Record<string, any>;
   }
 
-  interface Math {
+  var path: {
+    sep: string;
+    normalize(p: string): string;
+    join(...parts: string[]): string;
+    basename(p: string): string;
+    dirname(p: string): string;
+    extname(p: string): string;
+  };
+
+  // Global math utilities object attached by applyPrimitives()/global bundle
+  var mathUtils: {
     randomRangeFloat(min: number, max: number): number;
     randomRangeInt(min: number, max: number): number;
     lerp(min: number, max: number, t: number): number;
@@ -77,5 +92,5 @@ declare global {
     smoothStep(edge0: number, edge1: number, x: number): number;
     mix(x: number, y: number, a: number): number;
     mixColors(hex1: string, hex2: string, mixPerc: number): string;
-  }
+  };
 }

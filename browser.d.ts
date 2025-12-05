@@ -13,9 +13,9 @@
  *
  */
 
-export type { Pkit, PrimeString, PrimeNumber, PrimeArray, PrimeObject } from "./dist/primitivetools.js";
+export type { Pkit, PrimeString, PrimeNumber, PrimeArray, PrimeObject } from "./dist/primitiveprimer";
 
-import type { Pkit } from "./dist/primitivetools.js";
+import type { Pkit } from "./dist/primitiveprimer";
 
 declare global {
   var pkit: Pkit;

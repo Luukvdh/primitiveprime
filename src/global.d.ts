@@ -1,26 +1,29 @@
-// src/primitives/primitives.d.ts
 export {};
 
 declare global {
-  // ─── ARRAY PROTOTYPE ──────────────────────────────────────────────────────────
+  // Globals exposed by IIFE bundles
+  var pkit: import("./primitives.ts").Pkit;
+  var applyPrimitives: () => void;
+
   interface Array<T> {
     first(n?: number): T | T[];
     last(n?: number): T | T[];
+    findByKey<K extends keyof T & string>(key: K, value: any): T | null;
+    groupBy(fn: (item: T) => string): Record<string, T[]>;
+    groupBy<K extends keyof T & string>(key: K): Record<string, T[]>;
+    sumByKey<K extends keyof T & string>(key: K): number;
+    autoParseKeys(): T[];
     unique(): T[];
     shuffle(): T[];
-    sumByKey(key: string): number;
-    findByKey(key: string, value: any): T | null;
-    autoParseKeys(): T[];
-    highestByKey(key: string): T | null;
-    lowestByKey(key: string): T | null;
-    sortByKey(key: string, ascending?: boolean): T[];
-    sortByKeyName(key: string, ascending?: boolean): T[];
-    groupBy(fn: (item: T) => string): Record<string, T[]>;
+    highestByKey<K extends keyof T & string>(key: K): T | null;
+    lowestByKey<K extends keyof T & string>(key: K): T | null;
+    sortByKey<K extends keyof T & string>(key: K, ascending?: boolean): T[];
+    sortByKeyName<K extends keyof T & string>(key: K, ascending?: boolean): T[];
+    mapByKey<K extends keyof T & string>(key: K): Array<T[K]>;
   }
 
-  // ─── STRING PROTOTYPE ─────────────────────────────────────────────────────────
   interface String {
-    changeExtension(): string;
+    changeExtension(ext: string): string;
     reverse(): string;
     toTitleCase(): string;
     words(): string[];
@@ -41,7 +44,6 @@ declare global {
     substringFrom(startStr?: string, stopStr?: string): string;
   }
 
-  // ─── NUMBER PROTOTYPE ─────────────────────────────────────────────────────────
   interface Number {
     percentage(percent: number): number;
     isEven(): boolean;
@@ -54,7 +56,6 @@ declare global {
     toTimeCode(): string;
   }
 
-  // ─── OBJECT STATIC + INSTANCE ─────────────────────────────────────────────────
   interface ObjectConstructor {
     keysMap(obj: Record<string, any>, fn: (k: string, v: any) => [string, any]): Record<string, any>;
     valuesMap(obj: Record<string, any>, fn: (v: any, k: string) => any): Record<string, any>;
@@ -66,8 +67,17 @@ declare global {
     sortKeys(sorterFn?: ((a: string, b: string) => number) | null): Record<string, any>;
   }
 
-  // ─── MATH EXTENSIONS ──────────────────────────────────────────────────────────
-  interface Math {
+  var path: {
+    sep: string;
+    normalize(p: string): string;
+    join(...parts: string[]): string;
+    basename(p: string): string;
+    dirname(p: string): string;
+    extname(p: string): string;
+  };
+
+  // Global math utilities object attached by applyPrimitives()/global bundle
+  var mathUtils: {
     randomRangeFloat(min: number, max: number): number;
     randomRangeInt(min: number, max: number): number;
     lerp(min: number, max: number, t: number): number;
@@ -82,13 +92,5 @@ declare global {
     smoothStep(edge0: number, edge1: number, x: number): number;
     mix(x: number, y: number, a: number): number;
     mixColors(hex1: string, hex2: string, mixPerc: number): string;
-  }
-  var path: {
-    sep: string;
-    normalize(p: string): string;
-    join(...parts: string[]): string;
-    basename(p: string): string;
-    dirname(p: string): string;
-    extname(p: string): string;
   };
 }

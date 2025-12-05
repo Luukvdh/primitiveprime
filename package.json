@@ -1,6 +1,6 @@
 {
   "name": "primitiveprimer",
-  "version": "2.12.2",
+  "version": "2.12.3",
   "description": "Bluntly extend String, Array, Number, Object prototypes with useful methods, or use them as standalone utilities while leaving prototypes untouched",
   "type": "module",
   "sideEffects": true,
