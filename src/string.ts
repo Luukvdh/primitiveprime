@@ -5,7 +5,7 @@ export const stringMethods: [string, (...args: any[]) => any][] = [
   [
     "changeExtension",
     function (this: string, ext: string) {
-      return this.replace(/\.\w{1,4}$/i, ext.replace(/\W/, "").substring(1, 4));
+      return this.replace(/\.[0-9a-z]{1,5}$/i, ext.replace(/\W/, "").substring(0, 5));
     },
   ],
   [
