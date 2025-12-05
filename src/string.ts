@@ -4,9 +4,9 @@ import { addToPrototype } from "./addToPrototype.js";
 export function extendString() {
   const stringMethods: [string, (...args: any[]) => any][] = [
     [
-      "toHsp",
-      function (this: string) {
-        return this.replace(/\.\w{3}$/i, ".hsp");
+      "changeExtension",
+      function (this: string, ext: string) {
+        return this.replace(/\.\w{3}$/i, ext.replace(/^\.|\w/, ".").substring(0, 4));
       },
     ],
     [

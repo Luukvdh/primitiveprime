@@ -1,110 +1,80 @@
 # primitiveprimer
 
-Extend String, Array, Number, Object with generally useful helpers, plus lightweight DOM utils and a browser-safe path shim.
+Extend String, Array, Number, Object na Math with generally useful helpers, add a browser-safe version of node's path. Alternatively get all this functionality without defiling your prototypes in one handy wrapper pkit().
 
-Two ways to use:
-
-- Primer (prototype extensions): opt-in patching of built-ins. Import from the package root and call `applyPrimitives()` (or `applyPrimitivesGlobally()`).
-- Tools (safe utilities): functional, no-patch API via `pkit`. Import with `primitiveprimer/tools` (ESM/CJS) or use the CDN browser global.
-
-## Install
+# Install
 
 ```bash
 npm i primitiveprimer
 ```
 
-## Use
+# Use
 
-This package is opt-in to avoid surprising prototype changes. Call `applyPrimitives()` once at startup.
+You can:
+
+- have protoype extentions be auto deployed with .global versions.
+- install protoype extenions manually with extendPrototypes() in default versions.
+- leave prototypes intact, and get the same functionality by using pkit(\_) type recognizing wrapper
 
 ESM:
 
 ```ts
-import { applyPrimitives } from "primitiveprimer";
+import { applyPrimitives, pkit } from "primitiveprimer";
 applyPrimitives();
+
+//or to auto-deploy prototypes:
+import "primitiveprimer/global"; // runs the bundle that auto-applies prototypes
+
 // now String/Array/Number/Object have extra helpers
 ```
+
+or import the self-deploying version to auto-extend prototypes
 
 CommonJS (Node.js):
 
 ```js
-const { applyPrimitives } = require("primitiveprimer");
+const { applyPrimitives, pkit } = require("primitiveprimer");
 applyPrimitives();
+
+//or to auto-deploy prototypes:
+import "primitiveprimer/global"; // runs the bundle that auto-applies prototypes
+
+// now String/Array/Number/Object have extra helpers
 ```
 
-IIFE global (CDN):
+CDN (IIFE):
+.global deploys prototypes automatically, default version places applyPrimitives() and pkit() on globalThis/Window.
 
 ```html
 <script src="https://unpkg.com/primitiveprimer"></script>
 <script>
-  // window.PrimitivePrimer is available
-  console.log("ready");
-  console.log("hello".toTitleCase());
+  applyPrimitives(); // opt-in;
+  pkit("test.mp4").changeExtention("mp3"); // get functions via pkit();
 </script>
+OR
+<script src="https://unpkg.com/primitiveprimer/dist/primitiveprimer.global.js"></script>
+<!-- prototypes are applied automatically -->
 ```
 
-### Browser-only build (pkit)
-
-For a lightweight browser-only build with just the functional helpers (no prototype pollution), use the `pkit` browser bundle:
-
-**Option 1: Via CDN**
+**How to use pkit() functionality wrapper**
+If you or your situation object to the extending or primitive prototypes, the same functionality can be found by the pkit wrapper that will be placed on global/window.
+Wrap your subject in pkit(\*) and the functions will be available from there.
+Math functions and path shim can be found under _pkit.math_ and _pkit.path_
 
 ```html
-<script src="https://unpkg.com/primitiveprimer/dist/primitivetools.browser.js"></script>
 <script>
-  // pkit is now available globally
+  // pkit is now added globally
   const result = pkit("hello world").toTitleCase().unwrap(); // "Hello World"
   console.log(pkit.math.randomRangeInt(1, 10));
   console.log(pkit.path.basename("/path/to/file.txt"));
 </script>
 ```
 
-### Safe tools import (ESM/CJS)
-
-If you're in a module/bundler environment and prefer importing the safe tools API instead of a global, use the `./tools` subpath:
-
-ESM:
-
-```ts
-import pkit from "primitiveprimer/tools";
-
-console.log(pkit("hello world").toTitleCase().unwrap());
-console.log(pkit(42).percentage(50));
-console.log(pkit.path.basename("/path/to/file.txt"));
-```
-
-CommonJS:
-
-```js
-const pkit = require("primitiveprimer/tools").default;
-
-console.log(pkit([1, 2, 3]).shuffle());
-```
-
-TypeScript types for `./tools` are included automatically; no extra configuration required.
-
-### Assertions for TypeScript narrowing (attest)
-
-The safe tools include runtime assertions that use TS `asserts` to narrow types:
-
-```ts
-import pkit from "primitiveprimer/tools";
-
-const value: string | null | undefined = getMaybeValue();
-pkit.attest.notNil(value); // narrows to string
-console.log(value.toUpperCase());
-
-pkit.attest.lengthAtLeast([1, 2], 2); // narrows to number[]
-pkit.attest.jsonCompare({ a: 1 }, { a: 1 }); // asserts structural equality
-```
-
-### Parsing JSON-like properties in objects
+# Parsing JSON-like properties in objects with AutoParse
 
 For rows fetched from e.g. SQLite that store JSON as strings, auto-parse object properties:
 
 ```ts
-import pkit from "primitiveprimer/tools";
-
 const row = { id: "1", meta: '{"tags":["a","b"]}', ok: "true" };
 const parsed = pkit(row).autoParseKeys().unwrap();
 // → { id: "1", meta: { tags: ["a","b"] }, ok: true }
@@ -123,192 +93,108 @@ To get full IntelliSense/autocomplete when using the browser bundle in TypeScrip
 
 ```typescript
 // Add to your TypeScript file:
-/// <reference types="primitiveprimer/browser" />
+/// <reference types="primitiveprimer" />
 
 // Or add to tsconfig.json:
 {
   "compilerOptions": {
-    "types": ["primitiveprimer/browser"]
+    "types": ["primitiveprimer"]
   }
 }
-
-// Now pkit has full type support:
-pkit("hello").toTitleCase().unwrap(); // ✓ autocomplete works!
-pkit(42).percentage(50); // ✓ autocomplete works!
-pkit([1, 2, 3]).shuffle(); // ✓ autocomplete works!
 ```
-
-**Option 2: Copy to your public folder**
 
 If you've installed via npm and want to serve the file locally:
 
 ```bash
 # Using the built-in copy command (easiest)
-npx primitiveprimer-copy-browser
-# copies to ./public by default
-
-# Or specify a custom directory
-npx primitiveprimer-copy-browser public/vendor
-
-# Manual copy (Windows PowerShell)
-Copy-Item node_modules/primitiveprimer/dist/primitivetools.browser.* public/
-
-# Manual copy (macOS/Linux)
-cp node_modules/primitiveprimer/dist/primitivetools.browser.* public/
-
-# Or add to package.json scripts:
-# "postinstall": "primitiveprimer-copy-browser"
+npx primitiveprimer-copy-browser myhtml
+# copies minified files to ./myhtml | You can use this in package scripts.
 ```
 
-Then use:
-
-```html
-<script src="/primitivetools.browser.js"></script>
-```
-
-**Option 3: Using a bundler (Vite, Webpack, etc.)**
-
-Most bundlers can copy files from node_modules. For Vite, use `vite-plugin-static-copy`:
-
-```js
-// vite.config.js
-import { defineConfig } from "vite";
-import { viteStaticCopy } from "vite-plugin-static-copy";
-
-export default defineConfig({
-  plugins: [
-    viteStaticCopy({
-      targets: [
-        {
-          src: "node_modules/primitiveprimer/dist/primitivetools.browser.js",
-          dest: ".",
-        },
-      ],
-    }),
-  ],
-});
-```
-
-## Copying public assets into your app's /public
-
-If you want to ship or customize static assets (e.g., vendored files) from this package into your app's `./public` folder, use the provided CLI.
-
-- Default destination: `./public/primitiveprimer`
-- Flat mode: copy directly into `./public` with `--flat`
-
-Quick start:
-
-```bash
-npx primitiveprimer-copy
-# or flat into ./public
-npx primitiveprimer-copy --flat
-# or choose a custom destination
-npx primitiveprimer-copy --dest public/vendor/primitiveprimer --clean
-```
-
-You can also add an npm script:
-
-```json
-{
-  "scripts": {
-    "pp:copy": "primitiveprimer-copy --flat --clean"
-  }
-}
-```
-
-> Note: Copying into a consumer project's filesystem is intentionally opt-in (via the CLI) to avoid surprise side effects on install. Bundlers like Vite/Webpack can also copy from `node_modules/primitiveprimer/public` using their copy plugins.
-
-## Server-side Node usage
+# Server-side Node usage
 
 - Works in Node ESM and CommonJS—see examples above. The library only touches the DOM when you call DOM-related helpers; importing it on the server is safe as long as you don’t call browser-only functions.
-- If you prefer zero prototype changes on the server, skip `applyPrimitives()` and import specific pure helpers instead (e.g., `import { mathUtils } from "primitiveprimer"`).
 
-## Available Functions
+# Available Functions
 
-### String
+```typescript
+interface Array<T> {
+  first(n?: number): T | T[];
+  last(n?: number): T | T[];
+  unique(): T[];
+  shuffle(): T[];
+  sumByKey(key: string): number;
+  findByKey(key: string, value: any): any;
+  // … alle andere array methods
+}
 
-toHsp()
+interface String {
+  changeExtension(ext: string): string;
+  reverse(): string;
+  toTitleCase(): string;
+  words(): string[];
+  slashreverse(str: string): string;
+  slashwin(): string;
+  slashlinux(): string;
+  strip(): string;
+  containsAny(...arr: string[]): boolean;
+  toSlug(): string;
+  stripCompare(other: string): boolean;
+  toWordCapitalized(): string;
+  truncate(length: number, suffix?: string): string;
+  isJson(): boolean;
+  toCamelCase(): string;
+  safeParseJson(): any;
+  nullParseJson(): any | null;
+  filenameCompare(otherPath: string): boolean;
+  substringFrom(startStr?: string, stopStr?: string): string;
+}
 
-reverse()
+interface Number {
+  percentage(percent: number): number;
+  isEven(): boolean;
+  isOdd(): boolean;
+  toFixedNumber(decimals?: number): number;
+  between(min: number, max: number): boolean;
+  clamp(min: number, max: number): number;
+  times(fn: (i: number) => void): void;
+  toStringWithLeadingZeros(length: number): string;
+  toTimeCode(): string;
+}
 
-toTitleCase()
+interface ObjectConstructor {
+  keysMap(obj: Record<string, any>, fn: (k: string, v: any) => [string, any]): Record<string, any>;
+  valuesMap(obj: Record<string, any>, fn: (v: any, k: string) => any): Record<string, any>;
+  parseKeys(this: Record<string, any>, ...keys: string[]): Record<string, any>;
+}
 
-words()
+interface Object {
+  sortKeys(sorterFn?: ((a: string, b: string) => number) | null): Record<string, any>;
+}
 
-slashreverse(str)
-
-slashwin()
-
-slashlinux()
-
-strip()
-
-stripCompare(otherStr)
-
-toWordCapitalized()
-
-truncate(length, suffix?)
-
-isJson()
-
-safeParseJson()
-
-nullParseJson()
-
-filenameCompare(otherPath)
-
-### Number
-
-percentage(percent)
-
-isEven()
-
-isOdd()
-
-toFixedNumber(decimals?)
-
-between(min, max)
-
-clamp(min, max)
-
-times(fn)
-
-### Array
-
-findByKey(key, value)
-
-sumByKey(key)
-
-autoParseKeys()
-
-unique()
-
-shuffle()
-
-highestByKey(key)
-
-lowestByKey(key)
-
-sortByKey(key, ascending?)
-
-sortByKeyName(key, ascending?)
-
-### Object
-
-parseKeys(keys: string[])
-
-### Math
-
-randomRangeFloat(min, max)
-
-randomRangeInt(min, max)
-
-clamp(value, min, max)
-
-percentageInRange(min, max, percent)
-
-lerp(min, max, t)
-
-mapRange(value, inMin, inMax, outMin, outMax)
-
----
+interface Math {
+  randomRangeFloat(min: number, max: number): number;
+  randomRangeInt(min: number, max: number): number;
+  lerp(min: number, max: number, t: number): number;
+  clamp(value: number, min: number, max: number): number;
+  degToRad(degrees: number): number;
+  radToDeg(radians: number): number;
+  distance(x1: number, y1: number, x2: number, y2: number): number;
+  roundTo(value: number, decimals?: number): number;
+  isPowerOfTwo(value: number): boolean;
+  nextPowerOfTwo(value: number): number;
+  normalize(value: number, min: number, max: number): number;
+  smoothStep(edge0: number, edge1: number, x: number): number;
+  mix(x: number, y: number, a: number): number;
+  mixColors(hex1: string, hex2: string, mixPerc: number): string;
+}
+// only when browser is detected on not in use, path is added to browser window:
+var path: {
+  sep: string;
+  normalize(p: string): string;
+  join(...parts: string[]): string;
+  basename(p: string): string;
+  dirname(p: string): string;
+  extname(p: string): string;
+};
+```

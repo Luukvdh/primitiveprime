@@ -19,7 +19,7 @@ declare global {
   }
 
   interface String {
-    toHsp(): string;
+    changeExtension(ext: string): string;
     reverse(): string;
     toTitleCase(): string;
     words(): string[];

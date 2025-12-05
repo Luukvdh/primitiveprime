@@ -1,5 +1,5 @@
 // src/pathShim.ts
-export function createBrowserPathShim() {
+function createBrowserPathShim() {
   const normalize = (p: string) => {
     return p.replace(/\\/g, "/").replace(/\/{2,}/g, "/");
   };
@@ -23,6 +23,7 @@ export function createBrowserPathShim() {
   };
 }
 export function extendPath() {
+  if (typeof window === "undefined") return;
   if (!(globalThis as any).path) {
     (globalThis as any).path = createBrowserPathShim();
   }

@@ -1,7 +1,7 @@
 {
   "name": "primitiveprimer",
-  "version": "2.11.17",
-  "description": "Bluntly extend String, Array, Number, Object prototypes like a proto-caveman",
+  "version": "2.12.0",
+  "description": "Bluntly extend String, Array, Number, Object prototypes with useful methods, or use them as standalone utilities while leaving prototypes untouched",
   "type": "module",
   "sideEffects": true,
   "keywords": [
@@ -17,24 +17,21 @@
   "exports": {
     ".": {
       "types": "./dist/primitiveprimer.d.ts",
-      "import": "./dist/primitiveprimer.js",
+      "import": "./dist/primitiveprimer.mjs",
       "require": "./dist/primitiveprimer.cjs"
     },
-    "./tools": {
-      "types": "./dist/primitivetools.d.ts",
-      "import": "./dist/primitivetools.js",
-      "require": "./dist/primitivetools.cjs"
-    },
-    "./browser": "./dist/primitivetools.browser.js"
+    "./global": {
+      "import": "./dist/primitiveprimer.global.js",
+      "require": "./dist/primitiveprimer.global.cjs"
+    }
   },
-  "main": "./dist/primitiveprimer.cjs",
-  "module": "./dist/primitiveprimer.js",
+  "main": "./dist/primitiveprimer.js",
+  "module": "./dist/primitiveprimer.mjs",
   "types": "./index.d.ts",
   "unpkg": "./dist/primitiveprimer.global.js",
   "jsdelivr": "./dist/primitiveprimer.global.js",
   "files": [
     "dist/**",
-    "public/**",
     "bin/**",
     "index.d.ts",
     "global.d.ts",
@@ -57,11 +54,11 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run build:main && npm run build:tools && npm run build:browser",
-    "build:main": "tsup src/index.ts --entry.primitiveprimer=src/index.ts --dts --format esm,cjs,iife --global-name PrimitivePrimer --minify --sourcemap --out-dir dist",
-    "build:tools": "tsup src/primitivetools.ts --entry.primitivetools=src/primitivetools.ts --dts --format esm,cjs --minify --sourcemap --out-dir dist",
-    "build:browser": "tsup --config tsup.browser.config.ts",
-    "dev": "tsup src/index.ts --entry.primitiveprimer=src/index.ts --dts --format esm,cjs,iife --global-name PrimitivePrimer --out-dir dist --watch",
+    "build": "npm run build:main && npm run build:iife && npm run build:global && node bin/copy-minified.cjs",
+    "build:main": "tsup src/index.ts --entry.primitiveprimer=src/index.ts --dts --format esm,cjs --sourcemap --out-dir dist --config tsup.main.config.ts",
+    "build:iife": "tsup src/iife.ts --entry.primitiveprimer=src/iife.ts --format iife --global-name PrimitivePrimer --sourcemap --out-dir dist",
+    "build:global": "tsup src/auto.ts --entry.primitiveprimer-global=src/auto.ts --format cjs,iife --global-name PrimitivePrimer --sourcemap --out-dir dist && node bin/rename-global.cjs",
+    "dev": "tsup src/index.ts --entry.primitiveprimer=src/index.ts --dts --format esm,cjs --out-dir dist --config tsup.main.config.ts --watch",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "prepublishOnly": "npm run build"
   },

@@ -20,7 +20,7 @@ declare global {
 
   // ─── STRING PROTOTYPE ─────────────────────────────────────────────────────────
   interface String {
-    toHsp(): string;
+    changeExtension(): string;
     reverse(): string;
     toTitleCase(): string;
     words(): string[];
@@ -83,14 +83,6 @@ declare global {
     mix(x: number, y: number, a: number): number;
     mixColors(hex1: string, hex2: string, mixPerc: number): string;
   }
-
-  // ─── GLOBAL HELPERS (zoals DOMUtils, pathShim) ────────────────────────────────
-  var DOMUtils: {
-    dom: Record<string, HTMLElement>;
-    initIDs(): void;
-    measureElement(el: HTMLElement): { width: number; height: number };
-  };
-
   var path: {
     sep: string;
     normalize(p: string): string;
