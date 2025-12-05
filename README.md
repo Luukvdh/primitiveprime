@@ -12,9 +12,9 @@ npm i primitiveprimer
 
 You can:
 
-- have protoype extentions be auto deployed with .global versions.
-- install protoype extenions manually with extendPrototypes() in default versions.
-- leave prototypes intact, and get the same functionality by using pkit(\_) type recognizing wrapper
+- have prototype extentions be auto deployed with .global versions.
+- install prototype extenions manually with applyPrimitives() in default versions.
+- leave prototypes intact, and get the same functionality by using pkit() type recognizing wrapper
 
 ESM:
 
@@ -59,7 +59,6 @@ these are also available at https://unpkg.com/primitiveprimer
 
 ```typescript
 interface Array<T> {
-  unwrap(): T[];
   first(n?: 1): T | undefined;
   first(n: number): T[];
   last(n?: 1): T | undefined;
@@ -120,6 +119,7 @@ interface ObjectConstructor {
 
 interface Object {
   sortKeys(sorterFn?: ((a: string, b: string) => number) | null): Record<string, any>;
+  fill(T): Record<string, T>;
 }
 
 interface Math {
