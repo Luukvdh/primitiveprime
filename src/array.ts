@@ -83,6 +83,14 @@ export const arrayMethods = [
     "highestByKey",
     function <T extends Record<string, any>>(this: T[], key: string): T | null {
       if (!assertIsObjectArray(this)) return null;
+      if (
+        !assertIsArrayOfType(
+          this.map((item) => item[key]),
+          "number"
+        )
+      ) {
+        return null;
+      }
       if (!this.length) return null;
       return this.reduce((max, item) => (typeof item[key] === "number" && item[key] > (max?.[key] ?? -Infinity) ? item : max));
     },
@@ -91,6 +99,14 @@ export const arrayMethods = [
     "lowestByKey",
     function <T extends Record<string, any>>(this: T[], key: string): T | null {
       if (!assertIsObjectArray(this)) return null;
+      if (
+        !assertIsArrayOfType(
+          this.map((item) => item[key]),
+          "number"
+        )
+      ) {
+        return null;
+      }
       if (!this.length) return null;
       return this.reduce((min, item) => (typeof item[key] === "number" && item[key] < (min?.[key] ?? Infinity) ? item : min));
     },
@@ -255,27 +271,80 @@ export const arrayMethods = [
     },
   ] as arrayOfObjectsMethod,
   [
-    "sum",
-    function (this: number[]): number {
-      assertIsArrayOfType(this, "number");
-      return this.reduce((acc, cur) => acc + cur, 0);
+    "seededShuffle",
+    function <T>(this: T[], seed: number) {
+      // Return a deterministic permutation index based on seed and total
+      // Linear Congruential Generator to produce pseudo-random indices
+      const thisClone = [...this];
+      const total = this.length;
+      const res: number[] = Array.from({ length: total }, (_, i) => i);
+      const rand = () => (seed = (1103515245 * seed + 12345) >>> 0) / 0xffffffff;
+      for (let i = total - 1; i > 0; i--) {
+        const j = Math.floor(rand() * (i + 1));
+        [res[i], res[j]] = [res[j], res[i]];
+      }
+      const shuffled = res.map((i) => thisClone[i]);
+      return shuffled;
     },
-  ] as arrayOfObjectsMethod,
+  ] as arrayMethod,
+  [
+    "intersect",
+    function <T>(this: T[], other: T[]) {
+      const set = new Set(other);
+      return this.filter((x) => set.has(x));
+    },
+  ] as arrayMethod,
+  [
+    "difference",
+    function <T>(this: T[], other: T[]) {
+      const set = new Set(other);
+      return this.filter((x) => !set.has(x));
+    },
+  ] as arrayMethod,
+  [
+    "sum",
+    function (this: any[]) {
+      assertIsArrayOfType(this, "number");
+      let total = 0;
+      for (const v of this) {
+        const n = typeof v === "number" ? v : parseFloat(String(v));
+        if (!Number.isNaN(n)) total += n;
+        else if (v) total += 1; // count truthy when not a number
+      }
+      return total;
+    },
+  ] as arrayMethod,
   [
     "average",
-    function (this: number[]): number {
+    function (this: any[]) {
       assertIsArrayOfType(this, "number");
-      let total = 0,
-        count = 0;
-      for (const num of this) {
-        if (typeof num === "number" && !Number.isNaN(num)) {
-          total += num;
+      let total = 0;
+      let count = 0;
+      for (const v of this) {
+        const n = typeof v === "number" ? v : parseFloat(String(v));
+        if (!Number.isNaN(n)) {
+          total += n;
+          count++;
+        } else if (v) {
+          total += 1;
           count++;
         }
       }
-      return count ? total / count : 0;
+      return count === 0 ? 0 : total / count;
     },
-  ] as arrayMethod,
+  ],
+  [
+    "validateEach",
+    function <T>(this: (T | null)[], validatorFn: (item: T) => boolean) {
+      return this.map((item) => (item != null && validatorFn(item as T) ? item : null));
+    },
+  ],
+  [
+    "clearNil",
+    function <T>(this: (T | null | undefined)[]) {
+      return this.filter((x): x is T => x != null);
+    },
+  ],
 ] as arrayMethod[];
 
 export function extendArray() {

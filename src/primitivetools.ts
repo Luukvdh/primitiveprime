@@ -15,34 +15,78 @@ import { mathUtilsObj } from "./math.js";
 // ---------- TYPES ----------
 
 export interface PrimeString {
+  /** Replace the file extension with `ext`. */
   changeExtension(ext: string): string;
+  /** Return the string reversed. */
   reverse(): string;
+  /** Convert the string to Title Case. */
   toTitleCase(): string;
-
-  words(): string[]; // lezer → normaal type
-
-  slashreverse(): string;
+  /** Split string into words. */
+  words(): string[];
+  /** Reverse slashes relative to `str`. */
+  slashreverse(str: string): string;
+  /** Convert slashes to Windows style. */
   slashwin(): string;
+  /** Convert slashes to POSIX style. */
   slashlinux(): string;
-
+  /** Trim whitespace from both ends. */
   strip(): string;
+  /** Return true if contains any of the provided substrings. */
   containsAny(...arr: string[]): boolean;
-
+  /** Create a URL/file-system safe slug. */
   toSlug(): string;
+  /** Compare strings after stripping/normalizing. */
   stripCompare(other: string): boolean;
-
+  /** Capitalize each word in the string. */
   toWordCapitalized(): string;
+  /** Truncate to `length`, appending optional `suffix`. */
   truncate(length: number, suffix?: string): string;
-
+  /** Return true if string contains valid JSON. */
   isJson(): boolean;
+  /** Convert string to camelCase. */
   toCamelCase(): string;
-
+  /** Parse JSON and return value or original on failure. */
   safeParseJson(): any;
+  /** Parse JSON and return value or null on failure. */
   nullParseJson(): any | null;
-
+  /** Compare two paths by filename only. */
   filenameCompare(otherPath: string): boolean;
-
+  /** Return substring between optional start and stop markers. */
   substringFrom(startStr?: string, stopStr?: string): string;
+  /** Escape HTML special characters. */
+  escapeHTML(): string;
+  /** Unescape HTML entities to characters. */
+  unescapeHTML(): string;
+  /** Humanize identifiers: split camelCase, replace dashes/underscores, capitalize sentences. */
+  humanize(): string;
+  /** Convert to underscore_case. */
+  underscore(): string;
+  /** True if trimmed string is empty. */
+  isEmpty(): boolean;
+  /** Count occurrences of substring; case sensitive by default. */
+  countOccurrence(str2: string, caseSens?: boolean): number;
+  /** True if string represents a number. */
+  isNumber(): boolean;
+  /** True if string represents a float. */
+  isFloat(): boolean;
+  /** True if string is alphanumeric. */
+  isAlphaNumeric(): boolean;
+  /** True if string is all lowercase (with letters present). */
+  isLower(): boolean;
+  /** True if string is all uppercase (with letters present). */
+  isUpper(): boolean;
+  /** Simple non-crypto hash (hex); optional truncate. */
+  hashed(truncate?: number): string;
+  /** Replace the last occurrence of search with replacement. */
+  replaceLast(search: string | RegExp, replacement: string): string;
+  /** Remove diacritics (latinize). */
+  latinise(): string;
+  /** Truncate with "..." to total width. */
+  ellipsis(total: number): string;
+  /** Extract a numeric value from the string. */
+  toNumber(): number;
+  /** Parse boolean from common truthy/falsey words. */
+  toBoolean(): boolean;
 }
 export interface PrimeNumber {
   percentage(percent: number): number;
@@ -107,12 +151,20 @@ export interface PrimeArray<T> {
   distinct(keyOrFn: string | ((x: T) => any)): T[];
   /** Group-reduce objects by key or projection. */
   aggregate<R>(keyOrFn: string | ((x: T) => any), reducer: (acc: R, cur: T) => R, init: R): Record<string, R>;
-  /** Convert array of objects to column table map. */
-  toTable(): Record<string, any[]>;
   /** Sum numeric values by key (string). */
   sumBy(key: string): number;
   /** Average numeric values by key (string). */
   averageBy(key: string): number;
+  /** Sum all numeric values in the array. */
+  sum(): number;
+  /** Average all numeric values in the array. */
+  average(): number;
+  /** Return index of the highest number in the array. */
+  indexOfHighestNumber(): number;
+  /** Return index of the lowest number in the array. */
+  indexOfLowestNumber(): number;
+  /** Group-reduce objects by key or projection. */
+  toTable(): Record<string, any[]>;
 }
 
 // ---------- OVERLOADS VOOR pkit(...) ----------
@@ -120,7 +172,8 @@ export interface PrimeArray<T> {
 // ---------- TYPE VOOR HET CALLABLE PAKKET pkit ----------
 
 export interface Pkit {
-  (value: undefined): string;
+  (value: undefined): null;
+  (value: null): boolean;
   (value: string): PrimeString;
   (value: number): PrimeNumber;
   <T>(value: T[]): PrimeArray<T>;

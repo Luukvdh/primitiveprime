@@ -44,12 +44,20 @@ declare global {
     distinct(keyOrFn: string | ((x: T) => any)): T[];
     /** Group-reduce objects by key or projection. */
     aggregate<R>(keyOrFn: string | ((x: T) => any), reducer: (acc: R, cur: T) => R, init: R): Record<string, R>;
-    /** Convert array of objects to column table map. */
-    toTable(): Record<string, any[]>;
     /** Sum numeric values by key (string). */
     sumBy(key: string): number;
     /** Average numeric values by key (string). */
     averageBy(key: string): number;
+    /** Sum all numeric values in the array. */
+    sum(): number;
+    /** Average all numeric values in the array. */
+    average(): number;
+    /** Return index of the highest number in the array. */
+    indexOfHighestNumber(): number;
+    /** Return index of the lowest number in the array. */
+    indexOfLowestNumber(): number;
+    /** Group-reduce objects by key or projection. */
+    toTable(): Record<string, any[]>;
   }
 
   interface String {
