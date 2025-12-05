@@ -158,6 +158,7 @@ export function extendObject() {
       value: method[1],
       writable: true,
       configurable: true,
+      enumerable: false,
     });
   }
 }

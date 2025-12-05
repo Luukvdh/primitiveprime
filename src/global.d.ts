@@ -61,6 +61,10 @@ declare global {
     toTable(): Record<string, any[]>;
     /** Shuffle array with pattern using a seed for reproducibility. */
     seededShuffle(seed: number): T[];
+    /** index of highest number in array. */
+    indexOfHighestNumber(): number;
+    /** index of lowest number in array. */
+    indexOfLowestNumber(): number;
   }
 
   interface String {
@@ -185,8 +189,6 @@ declare global {
     pick(...keys: string[]): Record<string, any>;
     /** Fill missing keys from source without overwriting existing. */
     complement(src: Record<string, any>): Record<string, any>;
-    /** Remove empty string/null/undefined entries. */
-    clean(): Record<string, any>;
     /** Ensure keys conform to schema; optional type coercion. */
     ensureSchema(schema: Record<string, any>, opts?: { coerce?: boolean }): Record<string, any>;
     /** Filter object entries by predicate. */

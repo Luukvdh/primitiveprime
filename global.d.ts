@@ -58,6 +58,12 @@ declare global {
     indexOfLowestNumber(): number;
     /** Group-reduce objects by key or projection. */
     toTable(): Record<string, any[]>;
+    /** Shuffle array with pattern using a seed for reproducibility. */
+    seededShuffle(seed: number): T[];
+    /** index of highest number in array. */
+    indexOfHighestNumber(): number;
+    /** index of lowest number in array. */
+    indexOfLowestNumber(): number;
   }
 
   interface String {

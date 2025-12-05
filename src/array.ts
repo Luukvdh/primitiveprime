@@ -1,10 +1,25 @@
 // src/primitives/array.ts
-
 declare type arrayMethod = [string, (this: any[], ...args: any[]) => any];
 declare type arrayOfObjectsMethod = arrayMethod & [string, <T extends Record<string, any>>(this: T[], ...args: any[]) => any];
 
-const assertIsObjectArray = (arr: any): arr is Record<string, any>[] => Array.isArray(arr) && arr.every((item) => typeof item === "object" && item !== null);
-const assertIsArrayOfType = (arr: any, type: string): arr is Record<string, unknown>[] => Array.isArray(arr) && arr.every((item) => typeof item === type && item !== null);
+const assertIsObjectArray: (arr: any) => asserts arr is Record<string, any>[] = (arr: any): asserts arr is Record<string, any>[] => {
+  if (Array.isArray(arr) && arr.every((item) => typeof item === "object" && item !== null)) {
+    return undefined;
+  }
+  throw new Error("not an array of objects");
+};
+const assertIsArrayOfStrings: (arr: any) => asserts arr is string[] = (arr: any): asserts arr is string[] => {
+  if (arr.every((x: unknown) => typeof x === "string")) {
+    return undefined;
+  }
+  throw new Error("not an array of strings");
+};
+const assertIsArrayOfNumbers: (arr: any) => asserts arr is number[] = (arr: any): asserts arr is number[] => {
+  if (arr.every((x: unknown) => typeof x === "number")) {
+    return undefined;
+  }
+  throw new Error("not an array of numbers");
+};
 
 export const arrayMethods = [
   [
@@ -22,7 +37,7 @@ export const arrayMethods = [
   [
     "findByKey",
     function <T extends Record<string, any>>(this: T[], key: string, value: any): T | null {
-      if (!assertIsObjectArray(this)) return null;
+      assertIsObjectArray(this);
       for (const item of this) if (item[key] === value) return item;
       return null;
     },
@@ -40,14 +55,14 @@ export const arrayMethods = [
   [
     "sumByKey",
     function <T extends Record<string, any>>(this: T[], key: string): number {
-      if (!assertIsObjectArray(this)) return 0;
+      assertIsObjectArray(this);
       return this.reduce((acc, item) => acc + (typeof item[key] === "number" ? item[key] : 0), 0);
     },
   ] as arrayOfObjectsMethod,
   [
     "autoParseKeys",
     function <T extends Record<string, any>>(this: T[]): T[] {
-      if (!assertIsObjectArray(this)) return [];
+      assertIsObjectArray(this);
       return this.map((obj) => {
         if (obj && typeof obj === "object") {
           for (const key in obj) {
@@ -81,193 +96,219 @@ export const arrayMethods = [
   ] as arrayMethod,
   [
     "highestByKey",
-    function <T extends Record<string, any>>(this: T[], key: string): T | null {
-      if (!assertIsObjectArray(this)) return null;
-      if (
-        !assertIsArrayOfType(
-          this.map((item) => item[key]),
-          "number"
-        )
-      ) {
-        return null;
+    function <T extends Record<string, any>>(this: T[], key: string): T | -1 {
+      try {
+        assertIsObjectArray(this);
+        assertIsArrayOfNumbers(this.map((item) => item[key]));
+
+        this.length;
+        return this.reduce((max, item) => (typeof item[key] === "number" && item[key] > (max?.[key] ?? -Infinity) ? item : max));
+      } catch (e) {
+        console.error("not an numberarray in object", e);
+        return -1;
       }
-      if (!this.length) return null;
-      return this.reduce((max, item) => (typeof item[key] === "number" && item[key] > (max?.[key] ?? -Infinity) ? item : max));
     },
   ] as arrayOfObjectsMethod,
   [
     "lowestByKey",
-    function <T extends Record<string, any>>(this: T[], key: string): T | null {
-      if (!assertIsObjectArray(this)) return null;
-      if (
-        !assertIsArrayOfType(
-          this.map((item) => item[key]),
-          "number"
-        )
-      ) {
-        return null;
+    function <T extends Record<string, any>>(this: T[], key: string): T | -1 {
+      try {
+        assertIsObjectArray(this);
+        assertIsArrayOfNumbers(this.map((item) => item[key]));
+        return this.reduce((min, item) => (typeof item[key] === "number" && item[key] < (min?.[key] ?? Infinity) ? item : min));
+      } catch (e) {
+        console.error("not an objectArray", e);
+        return -1;
       }
-      if (!this.length) return null;
-      return this.reduce((min, item) => (typeof item[key] === "number" && item[key] < (min?.[key] ?? Infinity) ? item : min));
     },
   ] as arrayOfObjectsMethod,
   [
     "sortByKey",
     function <T extends Record<string, any>>(this: T[], key: string, ascending = true): T[] {
-      if (!assertIsObjectArray(this)) return [];
-      return [...this].sort((a, b) => {
-        const aVal = a[key] ?? 0;
-        const bVal = b[key] ?? 0;
-        return ascending ? aVal - bVal : bVal - aVal;
-      });
+      try {
+        assertIsObjectArray(this);
+        return [...this].sort((a, b) => {
+          const aVal = a[key] ?? 0;
+          const bVal = b[key] ?? 0;
+          return ascending ? aVal - bVal : bVal - aVal;
+        });
+      } catch (e) {
+        console.error("not an objectArray", e);
+        return [];
+      }
     },
   ] as arrayOfObjectsMethod,
   [
     "sortByKeyName",
     function <T extends Record<string, any>>(this: T[], key: string, ascending = true): T[] {
-      if (!assertIsObjectArray(this)) return [];
-      return [...this].sort((a, b) => {
-        const aVal = String(a[key] ?? "");
-        const bVal = String(b[key] ?? "");
-        return ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-      });
+      try {
+        assertIsObjectArray(this);
+        return [...this].sort((a, b) => {
+          const aVal = String(a[key] ?? "");
+          const bVal = String(b[key] ?? "");
+          return ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        });
+      } catch (e) {
+        console.error("not an objectArray", e);
+        return [];
+      }
     },
   ] as arrayOfObjectsMethod,
   [
     "mapByKey",
     function <T extends Record<string, any>, K extends keyof T>(this: T[], key: K): Array<T[K]> {
-      if (!assertIsObjectArray(this)) return [];
+      assertIsObjectArray(this);
       return this.map((item) => (item && typeof item === "object" ? item[key] : undefined)) as Array<T[K]>;
     },
   ] as arrayOfObjectsMethod,
   [
     "sumKey",
     function <T extends Record<string, any>>(this: T[], key: string) {
-      if (!assertIsObjectArray(this)) return 0;
-      if (
-        !assertIsArrayOfType(
-          this.map((item) => item[key]),
-          "number"
-        )
-      )
+      try {
+        assertIsObjectArray(this);
+        assertIsArrayOfNumbers(this.map((item) => item[key]));
+
+        return this.reduce((acc, cur) => acc + (parseFloat(String(cur[key])) || 0), 0);
+      } catch (e) {
+        console.error("not an numberarray in object", e);
         return 0;
-      return this.reduce((acc, cur) => acc + (parseFloat(String(cur[key])) || 0), 0);
+      }
     },
   ] as arrayOfObjectsMethod,
   [
     "averageKey",
     function <T extends Record<string, any>>(this: T[], key: string) {
-      if (!assertIsObjectArray(this)) return 0;
-      if (
-        !assertIsArrayOfType(
-          this.map((item) => item[key]),
-          "number"
-        )
-      )
-        return 0;
-      let total = 0,
-        count = 0;
-      for (const cur of this) {
-        const v = parseFloat(String(cur[key]));
-        if (!Number.isNaN(v)) {
-          total += v;
-          count++;
+      try {
+        assertIsObjectArray(this);
+        assertIsArrayOfNumbers(this.map((item) => item[key]));
+
+        let total = 0,
+          count = 0;
+        for (const cur of this) {
+          const v = parseFloat(String(cur[key]));
+          if (!Number.isNaN(v)) {
+            total += v;
+            count++;
+          }
         }
+        return count ? total / count : 0;
+      } catch (e) {
+        console.error("not an numberarray in object", e);
+        return 0;
       }
-      return count ? total / count : 0;
     },
   ] as arrayOfObjectsMethod,
   [
     "filterKey",
     function <T extends Record<string, any>>(this: T[], key: string, pred: (v: any) => boolean) {
-      if (!assertIsObjectArray(this)) return 0;
-      return this.filter((item) => pred(item[key]));
+      try {
+        assertIsObjectArray(this);
+        return this.filter((item) => pred(item[key]));
+      } catch (e) {
+        console.error("not an objectArray", e);
+        return [];
+      }
     },
   ] as arrayOfObjectsMethod,
   [
     "distinct",
     function <T extends Record<string, any>>(this: T[], keyOrFn: string | ((x: T) => any)) {
-      if (!assertIsObjectArray(this)) return 0;
-      const seen = new Set<any>();
-      const getKey = typeof keyOrFn === "function" ? keyOrFn : (x: T) => x[keyOrFn];
-      const out: T[] = [];
-      for (const item of this) {
-        const k = getKey(item);
-        if (!seen.has(k)) {
-          seen.add(k);
-          out.push(item);
+      try {
+        assertIsObjectArray(this);
+        const seen = new Set<any>();
+        const getKey = typeof keyOrFn === "function" ? keyOrFn : (x: T) => x[keyOrFn];
+        const out: T[] = [];
+        for (const item of this) {
+          const k = getKey(item);
+          if (!seen.has(k)) {
+            seen.add(k);
+            out.push(item);
+          }
         }
+        return out;
+      } catch (e) {
+        console.error("not an objectArray", e);
+        return [];
       }
-      return out;
     },
   ] as arrayOfObjectsMethod,
   [
     "aggregate",
     function <T extends Record<string, any>, R>(this: T[], keyOrFn: string | ((x: T) => any), reducer: (acc: R, cur: T) => R, init: R) {
-      if (!assertIsObjectArray(this)) return 0;
-      const getKey = typeof keyOrFn === "function" ? keyOrFn : (x: T) => x[keyOrFn];
-      const groups = new Map<any, R>();
-      for (const item of this) {
-        const k = getKey(item);
-        const acc = groups.has(k) ? groups.get(k)! : init;
-        groups.set(k, reducer(acc, item));
+      try {
+        assertIsObjectArray(this);
+        const getKey = typeof keyOrFn === "function" ? keyOrFn : (x: T) => x[keyOrFn];
+        const groups = new Map<any, R>();
+        for (const item of this) {
+          const k = getKey(item);
+          const acc = groups.has(k) ? groups.get(k)! : init;
+          groups.set(k, reducer(acc, item));
+        }
+        const out: Record<string, R> = {} as any;
+        for (const [k, v] of groups.entries()) (out as any)[k] = v;
+        return out;
+      } catch (e) {
+        console.error("not an objectArray", e);
+        return {};
       }
-      const out: Record<string, R> = {} as any;
-      for (const [k, v] of groups.entries()) (out as any)[k] = v;
-      return out;
     },
   ] as arrayOfObjectsMethod,
   [
     "toTable",
     function <T extends Record<string, any>>(this: T[]) {
-      if (!assertIsObjectArray(this)) return 0;
-      const out: Record<string, any[]> = {};
-      for (const item of this) {
-        for (const [k, v] of Object.entries(item)) {
-          (out[k] ??= []).push(v);
+      try {
+        assertIsObjectArray(this);
+        const out: Record<string, any[]> = {};
+        for (const item of this) {
+          for (const [k, v] of Object.entries(item)) {
+            (out[k] ??= []).push(v);
+          }
         }
+        return out;
+      } catch (e) {
+        console.error("not an objectArray", e);
+        return {};
       }
-      return out;
     },
   ] as arrayOfObjectsMethod,
   [
     "sumBy",
     function <T extends Record<string, any>>(this: T[], key: string) {
-      if (!assertIsObjectArray(this)) return 0;
-      if (
-        !assertIsArrayOfType(
-          this.map((item) => item[key]),
-          "number"
-        )
-      )
+      try {
+        assertIsObjectArray(this);
+        assertIsArrayOfNumbers(this.map((item) => item[key]));
+
+        return this.reduce((acc, cur) => {
+          const v = parseFloat(String(cur[key]));
+          return acc + (Number.isNaN(v) ? 0 : v);
+        }, 0);
+      } catch (e) {
+        console.error("not an objectArray", e);
         return 0;
-      return this.reduce((acc, cur) => {
-        const v = parseFloat(String(cur[key]));
-        return acc + (Number.isNaN(v) ? 0 : v);
-      }, 0);
+      }
     },
   ] as arrayOfObjectsMethod,
   [
     "averageBy",
     function <T extends Record<string, any>>(this: T[], key: string) {
-      if (!assertIsObjectArray(this)) return 0;
-      if (
-        !assertIsArrayOfType(
-          this.map((item) => item[key]),
-          "number"
-        )
-      )
-        return 0;
-      let total = 0,
-        count = 0;
-      for (const cur of this) {
-        const v = parseFloat(String(cur[key]));
-        if (!Number.isNaN(v)) {
-          total += v;
-          count++;
+      try {
+        assertIsObjectArray(this);
+        assertIsArrayOfNumbers(this.map((item) => item[key]));
+
+        let total = 0,
+          count = 0;
+        for (const cur of this) {
+          const v = parseFloat(String(cur[key]));
+          if (!Number.isNaN(v)) {
+            total += v;
+            count++;
+          }
         }
+        return count ? total / count : 0;
+      } catch (e) {
+        console.error("not an objectArray", e);
+        return 0;
       }
-      return count ? total / count : 0;
     },
   ] as arrayOfObjectsMethod,
   [
@@ -304,33 +345,43 @@ export const arrayMethods = [
   [
     "sum",
     function (this: any[]) {
-      assertIsArrayOfType(this, "number");
-      let total = 0;
-      for (const v of this) {
-        const n = typeof v === "number" ? v : parseFloat(String(v));
-        if (!Number.isNaN(n)) total += n;
-        else if (v) total += 1; // count truthy when not a number
+      try {
+        assertIsArrayOfNumbers(this);
+        let total = 0;
+        for (const v of this) {
+          const n = typeof v === "number" ? v : parseFloat(String(v));
+          if (!Number.isNaN(n)) total += n;
+          else if (v) total += 1; // count truthy when not a number
+        }
+        return total;
+      } catch (e) {
+        console.error("not an array of numbers", e);
+        return 0;
       }
-      return total;
     },
   ] as arrayMethod,
   [
     "average",
     function (this: any[]) {
-      assertIsArrayOfType(this, "number");
-      let total = 0;
-      let count = 0;
-      for (const v of this) {
-        const n = typeof v === "number" ? v : parseFloat(String(v));
-        if (!Number.isNaN(n)) {
-          total += n;
-          count++;
-        } else if (v) {
-          total += 1;
-          count++;
+      try {
+        assertIsArrayOfNumbers(this);
+        let total = 0;
+        let count = 0;
+        for (const v of this) {
+          const n = typeof v === "number" ? v : parseFloat(String(v));
+          if (!Number.isNaN(n)) {
+            total += n;
+            count++;
+          } else if (v) {
+            total += 1;
+            count++;
+          }
         }
+        return count === 0 ? 0 : total / count;
+      } catch (e) {
+        console.error("not an array of numbers", e);
+        return 0;
       }
-      return count === 0 ? 0 : total / count;
     },
   ],
   [
@@ -345,14 +396,53 @@ export const arrayMethods = [
       return this.filter((x): x is T => x != null);
     },
   ],
+  [
+    "indexOfHighestNumber",
+    function (this: unknown[]) {
+      try {
+        assertIsArrayOfNumbers(this);
+        if (this.length === 0) return -1;
+        let highestIndex = 0;
+        for (let i = 1; i < this.length; i++) {
+          if (this[i] > this[highestIndex]) {
+            highestIndex = i;
+          }
+        }
+        return highestIndex;
+      } catch (e) {
+        console.error("not an array of numbers", e);
+        return -1;
+      }
+    },
+  ] as arrayMethod,
+  [
+    "indexOfLowestNumber",
+    function (this: unknown[]) {
+      try {
+        assertIsArrayOfNumbers(this);
+        if (this.length === 0) return -1;
+        let lowestIndex = 0;
+        for (let i = 1; i < this.length; i++) {
+          if (this[i] < this[lowestIndex]) {
+            lowestIndex = i;
+          }
+        }
+        return lowestIndex;
+      } catch (e) {
+        console.error("not an array of numbers", e);
+        return -1;
+      }
+    },
+  ] as arrayMethod,
 ] as arrayMethod[];
 
 export function extendArray() {
   for (const method of arrayMethods) {
-    Object.defineProperty(Object.prototype, method[0], {
+    Object.defineProperty(Array.prototype, method[0], {
       value: method[1],
       writable: true,
       configurable: true,
+      enumerable: false,
     });
   }
 }
