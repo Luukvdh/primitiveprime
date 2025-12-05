@@ -57,13 +57,23 @@ these are also available at https://unpkg.com/primitiveprimer
 
 ```typescript
 interface Array<T> {
-  first(n?: number): T | T[];
-  last(n?: number): T | T[];
+  unwrap(): T[];
+  first(n?: 1): T | undefined;
+  first(n: number): T[];
+  last(n?: 1): T | undefined;
+  last(n: number): T[];
+  findByKey<K extends keyof T & string>(key: K, value: any): T | null;
+  groupBy(fn: (item: T) => string): Record<string, T[]>;
+  groupBy<K extends keyof T & string>(key: K): Record<string, T[]>;
+  sumByKey<K extends keyof T & string>(key: K): number;
+  autoParseKeys(): T[];
   unique(): T[];
   shuffle(): T[];
-  sumByKey(key: string): number;
-  findByKey(key: string, value: any): any;
-  // … alle andere array methods
+  highestByKey<K extends keyof T & string>(key: K): T | null;
+  lowestByKey<K extends keyof T & string>(key: K): T | null;
+  sortByKey<K extends keyof T & string>(key: K, ascending?: boolean): T[];
+  sortByKeyName<K extends keyof T & string>(key: K, ascending?: boolean): T[];
+  mapByKey<K extends keyof T & string>(key: K): Array<T[K]>;
 }
 
 interface String {
@@ -97,7 +107,7 @@ interface Number {
   clamp(min: number, max: number): number;
   times(fn: (i: number) => void): void;
   toStringWithLeadingZeros(length: number): string;
-  toTimeCode(): string;
+  toTimeCode(): string;  //HH?:MM:SS
 }
 
 interface ObjectConstructor {
