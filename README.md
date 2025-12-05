@@ -120,6 +120,7 @@ interface ObjectConstructor {
 interface Object {
   sortKeys(sorterFn?: ((a: string, b: string) => number) | null): Record<string, any>;
   fill(T): Record<string, T>;
+  assignFill(Record<string, any>): Record<string, any>;
 }
 
 interface Math {
