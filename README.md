@@ -55,66 +55,6 @@ OR
 <script src="https://unpkg.com/primitiveprimer/dist/primitiveprimer.global.js"></script>
 <!-- prototypes are applied automatically -->
 ```
-
-**How to use pkit() functionality wrapper**
-If you or your situation object to the extending or primitive prototypes, the same functionality can be found by the pkit wrapper that will be placed on global/window.
-Wrap your subject in pkit(\*) and the functions will be available from there.
-Math functions and path shim can be found under _pkit.math_ and _pkit.path_
-
-```html
-<script>
-  // pkit is now added globally
-  const result = pkit("hello world").toTitleCase().unwrap(); // "Hello World"
-  console.log(pkit.math.randomRangeInt(1, 10));
-  console.log(pkit.path.basename("/path/to/file.txt"));
-</script>
-```
-
-# Parsing JSON-like properties in objects with AutoParse
-
-For rows fetched from e.g. SQLite that store JSON as strings, auto-parse object properties:
-
-```ts
-const row = { id: "1", meta: '{"tags":["a","b"]}', ok: "true" };
-const parsed = pkit(row).autoParseKeys().unwrap();
-// → { id: "1", meta: { tags: ["a","b"] }, ok: true }
-```
-
-Arrays of rows also support auto-parse:
-
-```ts
-const rows = [{ data: '{"x":1}' }, { data: '{"x":2}' }];
-const parsedRows = pkit(rows).autoParseKeys().unwrap();
-```
-
-**TypeScript support for browser bundle:**
-
-To get full IntelliSense/autocomplete when using the browser bundle in TypeScript projects:
-
-```typescript
-// Add to your TypeScript file:
-/// <reference types="primitiveprimer" />
-
-// Or add to tsconfig.json:
-{
-  "compilerOptions": {
-    "types": ["primitiveprimer"]
-  }
-}
-```
-
-If you've installed via npm and want to serve the file locally:
-
-```bash
-# Using the built-in copy command (easiest)
-npx primitiveprimer-copy-browser myhtml
-# copies minified files to ./myhtml | You can use this in package scripts.
-```
-
-# Server-side Node usage
-
-- Works in Node ESM and CommonJS—see examples above. The library only touches the DOM when you call DOM-related helpers; importing it on the server is safe as long as you don’t call browser-only functions.
-
 # Available Functions
 
 ```typescript
@@ -198,3 +138,65 @@ var path: {
   extname(p: string): string;
 };
 ```
+
+
+**How to use pkit() functionality wrapper**
+If you or your situation object to the extending or primitive prototypes, the same functionality can be found by the pkit wrapper that will be placed on global/window.
+Wrap your subject in pkit(\*) and the functions will be available from there.
+Math functions and path shim can be found under _pkit.math_ and _pkit.path_
+
+```html
+<script>
+  // pkit is now added globally
+  const result = pkit("hello world").toTitleCase().unwrap(); // "Hello World"
+  console.log(pkit.math.randomRangeInt(1, 10));
+  console.log(pkit.path.basename("/path/to/file.txt"));
+</script>
+```
+
+# Parsing JSON-like properties in objects with AutoParse
+
+For rows fetched from e.g. SQLite that store JSON as strings, auto-parse object properties:
+
+```ts
+const row = { id: "1", meta: '{"tags":["a","b"]}', ok: "true" };
+const parsed = pkit(row).autoParseKeys().unwrap();
+// → { id: "1", meta: { tags: ["a","b"] }, ok: true }
+```
+
+Arrays of rows also support auto-parse:
+
+```ts
+const rows = [{ data: '{"x":1}' }, { data: '{"x":2}' }];
+const parsedRows = pkit(rows).autoParseKeys().unwrap();
+```
+
+**TypeScript support for browser bundle:**
+
+To get full IntelliSense/autocomplete when using the browser bundle in TypeScript projects:
+
+```typescript
+// Add to your TypeScript file:
+/// <reference types="primitiveprimer" />
+
+// Or add to tsconfig.json:
+{
+  "compilerOptions": {
+    "types": ["primitiveprimer"]
+  }
+}
+```
+
+If you've installed via npm and want to serve the file locally:
+
+```bash
+# Using the built-in copy command (easiest)
+npx primitiveprimer-copy-browser myhtml
+# copies minified files to ./myhtml | You can use this in package scripts.
+```
+
+# Server-side Node usage
+
+- Works in Node ESM and CommonJS—see examples above. The library only touches the DOM when you call DOM-related helpers; importing it on the server is safe as long as you don’t call browser-only functions.
+
+
