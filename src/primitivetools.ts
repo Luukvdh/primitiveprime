@@ -1,6 +1,12 @@
 /* eslint-disable no-redeclare */
 // primitivetools.ts
 
+import { objectMethods } from "./object.js";
+import { stringMethods } from "./string.js";
+import { numberMethods } from "./number.js";
+import { arrayMethods } from "./array.js";
+import { mathUtilsObj } from "./math.js";
+
 // Add it to pkit
 
 // ---------- TYPES ----------
@@ -39,47 +45,74 @@ export interface PrimeString {
   substringFrom(startStr?: string, stopStr?: string): string;
 }
 export interface PrimeNumber {
-  unwrap(): number;
-
   percentage(percent: number): number;
+  /** Return true if number is even. */
   isEven(): boolean;
+  /** Return true if number is odd. */
   isOdd(): boolean;
+  /** Like `toFixed` but returns a number. */
   toFixedNumber(decimals?: number): number;
+  /** Check if number is between min and max (inclusive). */
   between(min: number, max: number): boolean;
+  /** Clamp the number between min and max. */
   clamp(min: number, max: number): number;
+  /** Run `fn` `n` times with index. */
   times(fn: (i: number) => void): void;
+  /** Return string with leading zeros to reach `length`. */
   toStringWithLeadingZeros(length: number): string;
+  /** Convert seconds/number to a timecode string. */
   toTimeCode(): string;
+  /** Calculate what percent this number is of total. */
+  percentOf(total: number): number;
+  /** Calculate what ratio this number is of total. */
+  ratioOf(total: number): number;
 }
 
 export interface PrimeArray<T> {
-  unwrap(): T[];
-
-  first(n?: 1): T | undefined;
-  first(n: number): T[];
-
-  last(n?: 1): T | undefined;
-  last(n: number): T[];
-
+  /** Return first element or first n elements. */
+  first(n?: number): T | T[];
+  /** Return last element or last n elements. */
+  last(n?: number): T | T[];
+  /** Find an item where `key` equals `value`. */
   findByKey<K extends keyof T & string>(key: K, value: any): T | null;
-
+  /** Group items using a mapping function. */
   groupBy(fn: (item: T) => string): Record<string, T[]>;
+  /** Group items by a property key. */
   groupBy<K extends keyof T & string>(key: K): Record<string, T[]>;
-
+  /** Sum numeric values at the given key. */
   sumByKey<K extends keyof T & string>(key: K): number;
-
+  /** Parse item string fields where applicable. */
   autoParseKeys(): T[];
-
+  /** Return array with duplicates removed. */
   unique(): T[];
+  /** Return a shuffled copy of the array. */
   shuffle(): T[];
-
+  /** Return item with highest value for key or null. */
   highestByKey<K extends keyof T & string>(key: K): T | null;
+  /** Return item with lowest value for key or null. */
   lowestByKey<K extends keyof T & string>(key: K): T | null;
-
+  /** Sort array by key; ascending by default. */
   sortByKey<K extends keyof T & string>(key: K, ascending?: boolean): T[];
+  /** Sort array by key name (string) with optional order. */
   sortByKeyName<K extends keyof T & string>(key: K, ascending?: boolean): T[];
-
+  /** Map array to values of the given key. */
   mapByKey<K extends keyof T & string>(key: K): Array<T[K]>;
+  /** Sum numeric values at key across objects. */
+  sumKey(key: string): number;
+  /** Average numeric values at key across objects. */
+  averageKey(key: string): number;
+  /** Filter by a key using predicate. */
+  filterKey(key: string, pred: (v: any) => boolean): T[];
+  /** Unique objects by key or projection function. */
+  distinct(keyOrFn: string | ((x: T) => any)): T[];
+  /** Group-reduce objects by key or projection. */
+  aggregate<R>(keyOrFn: string | ((x: T) => any), reducer: (acc: R, cur: T) => R, init: R): Record<string, R>;
+  /** Convert array of objects to column table map. */
+  toTable(): Record<string, any[]>;
+  /** Sum numeric values by key (string). */
+  sumBy(key: string): number;
+  /** Average numeric values by key (string). */
+  averageBy(key: string): number;
 }
 
 // ---------- OVERLOADS VOOR pkit(...) ----------
@@ -91,438 +124,134 @@ export interface Pkit {
   (value: string): PrimeString;
   (value: number): PrimeNumber;
   <T>(value: T[]): PrimeArray<T>;
-  <T extends Record<string, any>>(value: T): PrimeObject<T>;
+  (value: Record<string, any>): PrimeObject;
   <T>(value: T): { unwrap(): T };
 
   // extra namespaces:
-  math: typeof mathUtils;
-  path: typeof pathkit;
+  math: MathUtils;
+  path: PathShim;
 }
 
 // losse implementatie-functie
-function pkitImpl(value: any): any {
+const pkitImpl = (value: any): any => {
   if (typeof value === "string") return createPrimeString(value);
   if (typeof value === "number") return createPrimeNumber(value);
   if (Array.isArray(value)) return createPrimeArray(value);
   if (value && typeof value === "object") return createPrimeObject(value);
-  return { unwrap: () => value };
-}
+  if (value === null) return false;
+  if (typeof value === "undefined") return null;
+  if (typeof value === "function") return pkitImpl(value());
+};
 // ---------- IMPLEMENTATIES ----------
 
 // STRING IMPLEMENTATIE (op basis van jouw eerdere methods)
 
 function createPrimeString(value: string): PrimeString {
-  const current = value;
+  let current = value;
 
-  return {
-    changeExtension(ext: string) {
-      if (!ext) {
-        return current;
-      }
-      if (!ext.startsWith(".")) {
-        ext = "." + ext;
-      }
-      return current.replace(/\.\w{1,5}$/i, ext);
-    },
-
-    reverse() {
-      return current.split("").reverse().join("");
-    },
-
-    toTitleCase() {
-      return current.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
-    },
-
-    words() {
-      return current.match(/\b\w+\b/g) || [];
-    },
-
-    slashreverse() {
-      return current.replace(/[\\/]/g, (ch) => (ch === "\\" ? "/" : "\\"));
-    },
-
-    slashwin() {
-      return current.replace(/[\\/]/g, "\\");
-    },
-
-    slashlinux() {
-      return current.replace(/[\\/]/g, "/");
-    },
-
-    strip() {
-      return current
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s+/g, "")
-        .trim();
-    },
-
-    containsAny(...arr: string[]) {
-      return arr.some((sub) => current.includes(sub));
-    },
-
-    toSlug() {
-      return current
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s+/g, "-")
-        .replace(/[^\w-]/g, "")
-        .replace(/--+/g, "-")
-        .replace(/^-+|-+$/g, "");
-    },
-
-    stripCompare(other: string) {
-      const normalize = (s: string) =>
-        s
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .replace(/[\s_]/g, "")
-          .trim();
-
-      return normalize(current).includes(normalize(other));
-    },
-
-    toWordCapitalized() {
-      return current ? current.charAt(0).toUpperCase() + current.slice(1).toLowerCase() : "";
-    },
-
-    truncate(length: number, suffix = "…") {
-      return current.length > length ? current.slice(0, length) + suffix : String(current);
-    },
-
-    isJson() {
-      try {
-        JSON.parse(current);
-        return true;
-      } catch {
-        return false;
-      }
-    },
-
-    toCamelCase() {
-      return current.replace(/([-_][a-z])/gi, ($1) => $1.toUpperCase().replace("-", "").replace("_", ""));
-    },
-
-    safeParseJson() {
-      try {
-        return JSON.parse(current);
-      } catch {
-        return current;
-      }
-    },
-
-    nullParseJson() {
-      if (!current.trim()) return null;
-      try {
-        return JSON.parse(current);
-      } catch {
-        return null;
-      }
-    },
-
-    filenameCompare(otherPath: string) {
-      const normalize = (p: string) => p.replace(/\\/g, "/").split("/").pop()?.toLowerCase() ?? "";
-      return normalize(current) === normalize(otherPath);
-    },
-
-    substringFrom(startStr?: string, stopStr?: string) {
-      const s = String(current);
-      if (!startStr) return s;
-      const i = s.indexOf(startStr);
-      if (i === -1) return "";
-      const from = i + startStr.length;
-      if (!stopStr) return s.slice(from);
-      const j = s.indexOf(stopStr, from);
-      return j === -1 ? s.slice(from) : s.slice(from, j);
-    },
-  };
+  return Object.fromEntries(
+    stringMethods.map(([name, fn]) => {
+      return [
+        name,
+        function (...args: any[]) {
+          current = fn.apply(current, args);
+          return current;
+        },
+      ];
+    })
+  ) as unknown as PrimeString;
 }
 
 // NUMBER IMPLEMENTATION
 
 function createPrimeNumber(initial: number): PrimeNumber {
-  const current = initial;
+  let current = initial;
+  let result: number | void | string | boolean;
+  return Object.fromEntries(
+    numberMethods.map(([name, fn]) => {
+      return [
+        name,
+        function (...args: any[]): number | void | string | boolean {
+          result = fn.apply(current, args);
 
-  return {
-    unwrap() {
-      return current;
-    },
-
-    percentage(percent: number) {
-      return (current * percent) / 100;
-    },
-
-    isEven() {
-      return current % 2 === 0;
-    },
-
-    isOdd() {
-      return current % 2 !== 0;
-    },
-
-    toFixedNumber(decimals = 2) {
-      return parseFloat(current.toFixed(decimals));
-    },
-
-    between(min: number, max: number) {
-      return current >= min && current <= max;
-    },
-
-    clamp(min: number, max: number) {
-      return Math.min(Math.max(current, min), max);
-    },
-
-    times(fn: (i: number) => void) {
-      for (let i = 0; i < current; i++) fn(i);
-    },
-
-    toStringWithLeadingZeros(length: number) {
-      return String(current).padStart(length, "0");
-    },
-
-    toTimeCode() {
-      const totalSeconds = Math.floor(current);
-      const hours = Math.floor(totalSeconds / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-
-      const pad2 = (n: number) => String(n).padStart(2, "0");
-
-      return `${hours}:${pad2(minutes)}:${pad2(seconds)}`;
-    },
-  };
+          return result;
+        },
+      ];
+    })
+  ) as unknown as PrimeNumber;
 }
 
 // ARRAY IMPLEMENTATION
 
-function createPrimeArray<T>(initial: T[]): PrimeArray<T> {
-  const current = initial;
-
-  return {
-    unwrap() {
-      return current;
-    },
-
-    first(n: number = 1): any {
-      if (n === 1) return current[0];
-      return current.slice(0, n);
-    },
-
-    last(n: number = 1): any {
-      if (n === 1) return current[current.length - 1];
-      return current.slice(-n);
-    },
-
-    findByKey(key: any, value: any): any {
-      for (const item of current as any[]) {
-        if (item && typeof item === "object" && item[key] === value) return item;
-      }
-      return null;
-    },
-
-    groupBy(fnOrKey: any): Record<string, T[]> {
-      return (current as any[]).reduce((acc: any, item: any) => {
-        const key = typeof fnOrKey === "function" ? fnOrKey(item) : item?.[fnOrKey];
-        (acc[key] ||= []).push(item);
-        return acc;
-      }, {} as Record<string, T[]>);
-    },
-
-    sumByKey(key: any): number {
-      return (current as any[]).reduce((acc, item) => {
-        const v = item?.[key];
-        return acc + (typeof v === "number" ? v : 0);
-      }, 0);
-    },
-
-    autoParseKeys(): T[] {
-      return (current as any[]).map((obj) => {
-        if (obj && typeof obj === "object") {
-          for (const key in obj) {
-            if (typeof (obj as any)[key] === "string") {
-              try {
-                (obj as any)[key] = JSON.parse((obj as any)[key]);
-              } catch {
-                // laat waarde staan
-              }
-            }
-          }
-        }
-        return obj;
-      }) as T[];
-    },
-
-    unique(): T[] {
-      return [...new Set(current)];
-    },
-
-    shuffle(): T[] {
-      const arr = [...current];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    },
-
-    highestByKey(key: any): T | null {
-      const arr = current as any[];
-      if (!arr.length) return null;
-      return arr.reduce((max: any, item: any) => (typeof item?.[key] === "number" && item[key] > (max?.[key] ?? -Infinity) ? item : max));
-    },
-
-    lowestByKey(key: any): T | null {
-      const arr = current as any[];
-      if (!arr.length) return null;
-      return arr.reduce((min: any, item: any) => (typeof item?.[key] === "number" && item[key] < (min?.[key] ?? Infinity) ? item : min));
-    },
-
-    sortByKey(key: any, ascending = true): T[] {
-      const arr = [...current] as any[];
-      return arr.sort((a, b) => {
-        const aVal = a?.[key] ?? 0;
-        const bVal = b?.[key] ?? 0;
-        return ascending ? aVal - bVal : bVal - aVal;
-      });
-    },
-
-    sortByKeyName(key: any, ascending = true): T[] {
-      const arr = [...current] as any[];
-      return arr.sort((a, b) => {
-        const aVal = String(a?.[key] ?? "");
-        const bVal = String(b?.[key] ?? "");
-        return ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-      });
-    },
-
-    mapByKey(key: any): any[] {
-      return (current as any[]).map((item) => (item && typeof item === "object" ? item[key] : undefined));
-    },
-  };
+function createPrimeArray<T extends any[]>(initial: T): PrimeArray<T> {
+  let current = initial;
+  let result: any = null;
+  return Object.fromEntries(
+    arrayMethods.map(([name, fn]) => {
+      return [
+        name,
+        function (...args: T[]) {
+          result = fn.apply(current, args);
+          return result;
+        },
+      ];
+    })
+  ) as unknown as PrimeArray<T>;
 }
 
-export interface PrimeObject<T extends Record<string, any> = Record<string, any>> {
-  unwrap(): T;
-
-  sortKeys(sorterFn?: ((a: string, b: string) => number) | null): T;
-
-  keysMap(fn: (k: string, v: any) => [string, any]): Record<string, any>;
-
-  valuesMap(fn: (v: any, k: string) => any): T;
-
-  parseKeys(...keys: string[]): T;
-
-  fill<U extends Record<string, any>>(source: U): T & U;
+export interface PrimeObject {
+  /** Return a new object with keys sorted by `sorterFn`. */
+  sortKeys(sorterFn?: ((a: string, b: string) => number) | null): Record<string, any>;
+  /** Shallow structural equality by keys and types. */
+  equals(other: Record<string, any>): boolean;
+  /** Return object without specified keys. */
+  omit(...keys: string[]): Record<string, any>;
+  /** Return object containing only specified keys. */
+  pick(...keys: string[]): Record<string, any>;
+  /** Fill missing keys from source without overwriting existing. */
+  complement(src: Record<string, any>): Record<string, any>;
+  /** Remove empty string/null/undefined entries. */
+  clean(): Record<string, any>;
+  /** Ensure keys conform to schema; optional type coercion. */
+  ensureSchema(schema: Record<string, any>, opts?: { coerce?: boolean }): Record<string, any>;
+  /** Filter object entries by predicate. */
+  filterEntries(predicate: (k: string, v: any) => boolean): Record<string, any>;
+  /** Merge with another object; control array merge strategy. */
+  merge(other: Record<string, any>, opts?: { arrayStrategy?: "concat" | "replace" | "unique" }): Record<string, any>;
+  /** Return a new object with keys sorted by `sorterFn`. */
+  sortKeys(sorterFn?: ((a: string, b: string) => number) | null): Record<string, any>;
+  /** Shallow structural equality by keys and types. */
+  equals(other: Record<string, any>): boolean;
+  /** Return object without specified keys. */
+  omit(...keys: string[]): Record<string, any>;
+  /** Return object containing only specified keys. */
+  pick(...keys: string[]): Record<string, any>;
+  /** Fill missing keys from source without overwriting existing. */
+  complement(src: Record<string, any>): Record<string, any>;
+  /** Remove empty string/null/undefined entries. */
+  clean(): Record<string, any>;
+  /** Ensure keys conform to schema; optional type coercion. */
+  ensureSchema(schema: Record<string, any>, opts?: { coerce?: boolean }): Record<string, any>;
+  /** Filter object entries by predicate. */
+  filterEntries(predicate: (k: string, v: any) => boolean): Record<string, any>;
+  /** Merge with another object; control array merge strategy. */
+  merge(other: Record<string, any>, opts?: { arrayStrategy?: "concat" | "replace" | "unique" }): Record<string, any>;
 }
 
-function createPrimeObject<T extends Record<string, any>>(initial: T): PrimeObject<T> {
+function createPrimeObject<T extends Record<string, any>>(initial: T): PrimeObject {
   let current = initial as any;
 
-  return {
-    unwrap() {
-      return current as T;
-    },
-
-    sortKeys(sorterFn: ((a: string, b: string) => number) | null = null) {
-      const entries = Object.entries(current);
-      const sorted = entries.sort(([keyA], [keyB]) => (sorterFn ? sorterFn(keyA, keyB) : keyA.localeCompare(keyB)));
-      current = Object.fromEntries(sorted);
-      return current as T;
-    },
-
-    keysMap(fn: (k: string, v: any) => [string, any]) {
-      current = Object.fromEntries(Object.entries(current).map(([k, v]) => fn(k, v)));
-      return current as Record<string, any>;
-    },
-
-    valuesMap(fn: (v: any, k: string) => any) {
-      current = Object.fromEntries(Object.entries(current).map(([k, v]) => [k, fn(v, k)]));
-      return current as T;
-    },
-
-    parseKeys(...keys: string[]) {
-      // Ik interpreteer je oude parseKeys als:
-      // "probeer opgegeven keys te JSON-parsen in dit object zelf"
-      for (const key of keys) {
-        try {
-          current[key] = JSON.parse(current[key]);
-        } catch {
-          // laat waarde zoals hij is
-        }
-      }
-      return current as T;
-    },
-
-    fill<U extends Record<string, any>>(source: U) {
-      for (const [key, value] of Object.entries(source)) {
-        if (!(key in current)) {
-          current[key] = value;
-        }
-      }
-      return current as T & U;
-    },
-  };
-}
-
-//MATH KIT, HAS MORE MATH FUNCTIONS
-const mathUtils = {
-  randomRangeFloat(min: number, max: number) {
-    return Math.random() * (max - min) + min;
-  },
-  randomRangeInt(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  },
-  lerp(min: number, max: number, t: number) {
-    return min + (max - min) * t;
-  },
-  clamp(value: number, min: number, max: number) {
-    return Math.min(Math.max(value, min), max);
-  },
-  degToRad(deg: number) {
-    return deg * (Math.PI / 180);
-  },
-  radToDeg(rad: number) {
-    return rad * (180 / Math.PI);
-  },
-  distance(x1: number, y1: number, x2: number, y2: number) {
-    return Math.hypot(x2 - x1, y2 - y1);
-  },
-  roundTo(value: number, decimals = 2) {
-    return Math.round(value * 10 ** decimals) / 10 ** decimals;
-  },
-  isPowerOfTwo(value: number) {
-    return value > 0 && (value & (value - 1)) === 0;
-  },
-  nextPowerOfTwo(value: number) {
-    return 2 ** Math.ceil(Math.log2(value));
-  },
-  normalize(value: number, min: number, max: number) {
-    return (value - min) / (max - min);
-  },
-  smoothStep(edge0: number, edge1: number, x: number) {
-    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
-    return t * t * (3 - 2 * t);
-  },
-  mix(x: number, y: number, a: number) {
-    return x * (1 - a) + y * a;
-  },
-  mixColors(hex1: string, hex2: string, mixPerc: number) {
-    const cleanHex = (h: string) => h.replace("#", "").padStart(6, "0");
-    const [h1, h2] = [cleanHex(hex1), cleanHex(hex2)];
-    const [r1, g1, b1] = [parseInt(h1.slice(0, 2), 16), parseInt(h1.slice(2, 4), 16), parseInt(h1.slice(4, 6), 16)];
-    const [r2, g2, b2] = [parseInt(h2.slice(0, 2), 16), parseInt(h2.slice(2, 4), 16), parseInt(h2.slice(4, 6), 16)];
-    const r = Math.round(this.mix(r1, r2, mixPerc));
-    const g = Math.round(this.mix(g1, g2, mixPerc));
-    const b = Math.round(this.mix(b1, b2, mixPerc));
-    const toHex = (n: number) => n.toString(16).padStart(2, "0");
-    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-  },
-};
-if (globalThis.Math) {
-  Object.assign(mathUtils, globalThis.Math);
+  return Object.fromEntries(
+    objectMethods.map(([name, fn]) => {
+      return [
+        name,
+        function (...args: any[]) {
+          current = fn.apply(current, args);
+          return current;
+        },
+      ];
+    })
+  ) as unknown as PrimeObject;
 }
 
 //PATH KIT SIMULATES NODEJS' PATH FUNCTIONS
@@ -532,7 +261,7 @@ const normalize = (p: string) => {
 };
 const sep = (globalThis as any).process ? ((globalThis as any).process.platform === "win32" ? "\\" : "/") : globalThis.window?.navigator.platform.startsWith("Win") ? "\\" : "/";
 
-const pathkit = {
+const pathkit: PathShim = {
   sep,
   normalize,
   join: (...parts: string[]) => normalize(parts.filter(Boolean).join(sep)),
@@ -550,13 +279,10 @@ const pathkit = {
 };
 
 const pkit = pkitImpl as Pkit;
-
-// koppel de namespaces:
-pkit.math = mathUtils;
+pkit.math = mathUtilsObj;
 pkit.path = pathkit;
 
 // eventueel named exports laten bestaan (handig als je ze los wilt importeren)
-export { mathUtils as mathkit, pathkit };
-
+export { mathUtilsObj as mathkit, pathkit };
 // en dit is nu je default:
 export default pkit;

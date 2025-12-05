@@ -23,8 +23,10 @@ function createBrowserPathShim() {
   };
 }
 export function extendPath() {
-  if (typeof (globalThis as any).window === "undefined") return;
-  if (!(globalThis as any).window?.path) {
-    (globalThis as any).window.path = createBrowserPathShim();
-  }
+  // Prefer attaching the shim to `globalThis.path` so it works in
+  // browsers, workers and other JS environments (not only when
+  // `window` exists). Do nothing if `path` is already defined.
+  if (typeof globalThis === "undefined") return;
+  if ((globalThis as any).path) return;
+  (globalThis as any).path = createBrowserPathShim();
 }

@@ -1,5 +1,5 @@
 // src/primitives/math.ts
-export const mathUtils = {
+export const mathUtilsObj: MathUtils = {
   randomRangeFloat(min: number, max: number) {
     return Math.random() * (max - min) + min;
   },
@@ -55,9 +55,9 @@ export const mathUtils = {
 
 export function extendMathUtils() {
   if (!(globalThis as any).mathUtils) {
-    (globalThis as any).mathUtils = mathUtils;
+    (globalThis as any).mathUtils = mathUtilsObj;
   }
   if (typeof (globalThis as any).window !== "undefined") {
-    Object.assign((globalThis as any).window, { mathUtils });
+    Object.assign((globalThis as any).window, { mathUtils: mathUtilsObj } as { mathUtils: typeof mathUtilsObj });
   }
 }
