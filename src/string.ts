@@ -1,7 +1,34 @@
 // src/primitives/string.ts
-import { addToPrototype } from "./addToPrototype.js";
+import { NonEmpty } from "./global.js";
+import { p } from "./index.js";
+
+const { assert, assertRoute } = p;
+
+function assertIs<T, U extends T>(value: T, guard: (v: T) => v is U, message: string = "Type assertion failed"): asserts value is U {
+  if (!guard(value)) {
+    throw new Error(message);
+  }
+}
 
 export const stringMethods: [string, (...args: any[]) => any][] = [
+  [
+    "assertNonEmptyString",
+    function (this: string) {
+      try {
+        assertIs(this, (v): v is string => typeof v === "string");
+        return this as string & NonEmpty;
+      } catch {
+        return false;
+      }
+    },
+  ],
+
+  [
+    "isNonEmty",
+    function (this: string): this is string & NonEmpty {
+      return typeof this === "string" && this.trim().length > 0;
+    },
+  ],
   [
     "changeExtension",
     function (this: string, ext: string) {
@@ -190,12 +217,6 @@ export const stringMethods: [string, (...args: any[]) => any][] = [
     },
   ],
   [
-    "isEmpty",
-    function (this: string) {
-      return this.trim().length === 0;
-    },
-  ],
-  [
     "countOccurrence",
     function (this: string, str2: string, caseSens: boolean = true) {
       const src = caseSens ? this : this.toLowerCase();
@@ -212,19 +233,19 @@ export const stringMethods: [string, (...args: any[]) => any][] = [
   ],
   [
     "isNumber",
-    function (this: string) {
+    function (this: string): this is string {
       return /^\s*[+-]?(?:\d+\.?\d*|\.\d+)\s*$/.test(this);
     },
   ],
   [
     "isFloat",
-    function (this: string) {
-      return /^\s*[+-]?\d*\.\d+\s*$/.test(this);
+    function (this: string): this is string {
+      return /^\s*[+-]?\d*\.\d+\s*$/.test(this) && !Number.isNaN(parseFloat(this));
     },
   ],
   [
     "isAlphaNumeric",
-    function (this: string) {
+    function (this: string): this is string {
       return /^[a-z0-9]+$/i.test(this);
     },
   ],

@@ -1,3 +1,5 @@
+import { addInterface } from "./object.js";
+
 // src/primitives/math.ts
 export const mathUtilsObj: MathUtils = {
   randomRangeFloat(min: number, max: number) {
@@ -61,3 +63,4 @@ export function extendMathUtils() {
     Object.assign((globalThis as any).window, { mathUtils: mathUtilsObj } as { mathUtils: typeof mathUtilsObj });
   }
 }
+addInterface("MathUtils", mathUtilsObj);

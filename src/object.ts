@@ -1,6 +1,59 @@
 // src/primitives/object.ts
-
 declare type ObjectMethod = [string, (this: Record<string, any>, ...args: any[]) => any];
+declare type ObjectMethodTS = ObjectMethod & [string, <T, U extends T>(this: T) => U | boolean];
+import { Empty, NonEmpty } from "./global.js";
+import { isEmpty, p, AssertError } from "./index.js";
+const { assert, assertRoute } = p;
+const interfaces: Record<string, string[]> = {};
+export function addInterface(name: string, iface: string[]) {
+  interfaces[name] = iface;
+}
+export const objectMethodsTS: ObjectMethodTS[] = [
+  [
+    "isObject",
+    function (this: any): this is Record<string, any> | never {
+      return assertRoute(this, () => {
+        if (this !== null && typeof this === "object" && !Array.isArray(this)) {
+          return this;
+        }
+        throw new AssertError("Not an object");
+      });
+    },
+  ],
+  [
+    "assertHasKeys",
+    function <K extends string>(this: Record<string, any>, ...keys: K[]): asserts this is Record<string, any> & Record<K, unknown> {
+      for (const key of keys) {
+        if (!(key in this)) {
+          throw new Error(`Missing required key: ${key}`);
+        }
+      }
+      // No return needed with asserts; TS narrows automatically after this call
+    },
+  ],
+  [
+    "asType", // Generic "I know what this is"
+
+    function <T>(this: Record<string, any>): T {
+      // You've done the validation above; now cast with confidence
+      return this as unknown as T;
+    },
+  ],
+  [
+    "isNonEmty",
+    function (this: Record<string, any>): this is Record<string, any> & Record<string, NonEmpty> {
+      return Object.values(this).every((value) => typeof value === "string" && value.trim().length > 0);
+    },
+    "mapEmptyToFalseyKeyObje",
+    function (this: Record<string, any>): Record<string, Boolean> {
+      return Object.fromEntries(Object.entries(this).map((a, b) => [a, isEmpty(b)]));
+    },
+    "mapEmptyToFalseyValueArray",
+    function (this: Record<string, any>): Record<string, Boolean> {
+      return Object.fromEntries(Object.entries(this).map((a, b) => [a, isEmpty(b)]));
+    },
+  ],
+] as ObjectMethodTS[];
 
 export const objectMethods = [
   [
@@ -39,6 +92,12 @@ export const objectMethods = [
     "valuesMap",
     function (this: Record<string, any>, fn: (v: any, k: string) => any): Record<string, any> {
       return Object.fromEntries(Object.entries(this).map(([k, v]) => [k, fn(v, k)]));
+    },
+  ] as ObjectMethod,
+  [
+    "entriesMap",
+    function (this: Record<string, any>, fn: ([key, value]: [string, any]) => [string, any]): Record<string, any> {
+      return Object.fromEntries(Object.entries(this).map(fn));
     },
   ] as ObjectMethod,
   [

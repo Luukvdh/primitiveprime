@@ -21,6 +21,78 @@ const assertIsArrayOfNumbers: (arr: any) => asserts arr is number[] = (arr: any)
   throw new Error("not an array of numbers");
 };
 
+export const arrayMethodsTS: [string, (this: any[], ...args: any[]) => any][] = [
+  [
+    "filterGuard",
+    function <T, U extends T>(this: T[], pred: (x: T) => x is U) {
+      return this.filter((x): x is U => pred(x)) as U[];
+    },
+  ],
+  [
+    "findGuard",
+    function <T, U extends T>(this: T[], pred: (x: T) => x is U) {
+      for (const x of this) if (pred(x)) return x as U;
+      return undefined;
+    },
+  ],
+  [
+    "assertIsStringArray",
+    function (this: unknown[]): asserts this is string[] {
+      assertIsArrayOfStrings(this);
+    },
+  ],
+  [
+    "assertIsNumberArray",
+    function (this: unknown[]): asserts this is number[] {
+      assertIsArrayOfNumbers(this);
+    },
+  ],
+  [
+    "asStrings",
+    function (this: unknown[]): string[] | unknown[] {
+      try {
+        assertIsArrayOfStrings(this);
+        return this as string[];
+      } catch {
+        return this as unknown[];
+      }
+    },
+  ],
+  [
+    "asNumbers",
+    function (this: unknown[]): number[] | unknown[] {
+      try {
+        assertIsArrayOfNumbers(this);
+        return this as number[];
+      } catch {
+        return this as unknown[];
+      }
+    },
+  ],
+  [
+    "tryAsStrings",
+    function (this: unknown[]): string[] | null {
+      try {
+        assertIsArrayOfStrings(this);
+        return this as string[];
+      } catch {
+        return null;
+      }
+    },
+  ],
+  [
+    "tryAsNumbers",
+    function (this: unknown[]): number[] | null {
+      try {
+        assertIsArrayOfNumbers(this);
+        return this as number[];
+      } catch {
+        return null;
+      }
+    },
+  ],
+];
+
 export const arrayMethods = [
   [
     "first",
@@ -438,6 +510,14 @@ export const arrayMethods = [
 
 export function extendArray() {
   for (const method of arrayMethods) {
+    Object.defineProperty(Array.prototype, method[0], {
+      value: method[1],
+      writable: true,
+      configurable: true,
+      enumerable: false,
+    });
+  }
+  for (const method of arrayMethodsTS) {
     Object.defineProperty(Array.prototype, method[0], {
       value: method[1],
       writable: true,

@@ -32,6 +32,13 @@ export const numberMethods: numberMethod[] = [
     },
   ] as numberMethod,
   [
+    "assertNrBetween",
+    function (this: number, min: number = 0, max: number = Infinity): this is number {
+      return this >= min && this <= max;
+    },
+  ] as numberMethod,
+
+  [
     "clamp",
     function (this: number, min: number, max: number): number {
       return Math.min(Math.max(this, min), max);
@@ -72,6 +79,54 @@ export const numberMethods: numberMethod[] = [
       return total === 0 ? 0 : this / total;
     },
   ] as numberMethod,
+  [
+    "isInteger",
+    function (this: number): this is number {
+      return Number.isInteger(this);
+    },
+  ] as numberMethod,
+  [
+    "isFinite",
+    function (this: number): this is number {
+      return Number.isFinite(this);
+    },
+  ] as numberMethod,
+  [
+    "isSafeInteger",
+    function (this: number): this is number {
+      return Number.isSafeInteger(this);
+    },
+  ] as numberMethod,
+  [
+    "isPositive",
+    function (this: number): this is number {
+      return this > 0;
+    },
+  ] as numberMethod,
+  [
+    "isNegative",
+    function (this: number): this is number {
+      return this < 0;
+    },
+  ] as numberMethod,
+  [
+    "isNonNegative",
+    function (this: number): this is number {
+      return this >= 0;
+    },
+  ] as numberMethod,
+  [
+    "assertIsInteger",
+    function (this: number): asserts this is number {
+      if (!Number.isInteger(this)) throw new Error("Not an integer");
+    },
+  ] as numberMethod,
+  [
+    "assertIsFinite",
+    function (this: number): asserts this is number {
+      if (!Number.isFinite(this)) throw new Error("Not finite (NaN or Infinity)");
+    },
+  ],
 ];
 
 export function extendNumber() {

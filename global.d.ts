@@ -56,6 +56,22 @@ declare global {
     indexOfHighestNumber(): number;
     /** Return index of the lowest number in the array. */
     indexOfLowestNumber(): number;
+    /** Filter with a type guard predicate and return narrowed array. */
+    filterGuard<U extends T>(pred: (x: T) => x is U): U[];
+    /** Find first element matching guard; returns narrowed or undefined. */
+    findGuard<U extends T>(pred: (x: T) => x is U): U | undefined;
+    /** Assert this array contains only strings (throws otherwise). */
+    assertIsStringArray(this: unknown[]): asserts this is string[];
+    /** Assert this array contains only numbers (throws otherwise). */
+    assertIsNumberArray(this: unknown[]): asserts this is number[];
+    /** Attempt to narrow as string[]; returns string[] | unknown[] (degraded on fail). */
+    asStrings(this: unknown[]): string[] | unknown[];
+    /** Attempt to narrow as number[]; returns number[] | unknown[] (degraded on fail). */
+    asNumbers(this: unknown[]): number[] | unknown[];
+    /** Try narrowing as string[]; returns null if validation fails (safe pattern). */
+    tryAsStrings(this: unknown[]): string[] | null;
+    /** Try narrowing as number[]; returns null if validation fails (safe pattern). */
+    tryAsNumbers(this: unknown[]): number[] | null;
     /** Group-reduce objects by key or projection. */
     toTable(): Record<string, any[]>;
     /** Shuffle array with pattern using a seed for reproducibility. */
@@ -172,6 +188,7 @@ declare global {
     /** Map object values using `fn` into a new object. */
     valuesMap(obj: Record<string, any>, fn: (v: any, k: string) => any): Record<string, any>;
     /** Parse specified keys on `this` object and return new object. */
+    entriesMap(obj: Record<string, any>, fn: ([key, value]: [string, any]) => [string, any]): Record<string, any>;
     parseKeys(this: Record<string, any>, ...keys: string[]): Record<string, any>;
     /** Shallow-merge `source` into `target` and return the result. */
     fill<T extends Record<string, any>, U extends Record<string, any>>(target: T, source: U): T & U;

@@ -1,4 +1,14 @@
+import { keys } from "ts-transformer-keys";
 import type { Pkit } from "./dist/primitiveprimer";
+
+export type NonEmpty = true & (string | any[] | Record<string, unknown> | number | boolean);
+/**
+ * Represents all "empty" values.
+ * - Arrays and strings always have length: 0.
+ * - Objects have no keys, or all keys have values 0 or null.
+ */
+export type Empty = false | (any[] & { length: 0 }) | (string & { length: 0 }) | Record<never, never> | { [P in keyof null]: T } | NonNullable<null> | NonNullable<unknown> | NonNullable<undefined>;
+export { NonEmpty, Empty };
 declare global {
   // Globals exposed by IIFE bundles
   /** Global utilities instance provided by the library. */
@@ -65,6 +75,22 @@ declare global {
     indexOfHighestNumber(): number;
     /** index of lowest number in array. */
     indexOfLowestNumber(): number;
+    /** Filter with a type guard predicate and return narrowed array. */
+    filterGuard<U extends T>(pred: (x: T) => x is U): U[];
+    /** Find first element matching guard; returns narrowed or undefined. */
+    findGuard<U extends T>(pred: (x: T) => x is U): U | undefined;
+    /** Assert this array contains only strings (throws otherwise). */
+    assertIsStringArray(this: unknown[]): asserts this is string[];
+    /** Assert this array contains only numbers (throws otherwise). */
+    assertIsNumberArray(this: unknown[]): asserts this is number[];
+    /** Attempt to narrow as string[]; returns string[] | unknown[] (degraded on fail). */
+    asStrings(this: unknown[]): string[] | unknown[];
+    /** Attempt to narrow as number[]; returns number[] | unknown[] (degraded on fail). */
+    asNumbers(this: unknown[]): number[] | unknown[];
+    /** Try narrowing as string[]; returns null if validation fails (safe pattern). */
+    tryAsStrings(this: unknown[]): string[] | null;
+    /** Try narrowing as number[]; returns null if validation fails (safe pattern). */
+    tryAsNumbers(this: unknown[]): number[] | null;
   }
 
   interface String {
@@ -171,6 +197,7 @@ declare global {
     /** Map object keys using `fn` into a new object. */
     keysMap(obj: Record<string, any>, fn: (k: string, v: any) => [string, any]): Record<string, any>;
     /** Map object values using `fn` into a new object. */
+    entriesMap(obj: Record<string, any>, fn: ([key, value]: [string, any]) => [string, any]): Record<string, any>;
     valuesMap(obj: Record<string, any>, fn: (v: any, k: string) => any): Record<string, any>;
     /** Parse specified keys on `this` object and return new object. */
     parseKeys(this: Record<string, any>, ...keys: string[]): Record<string, any>;
