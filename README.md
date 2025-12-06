@@ -185,7 +185,7 @@ these are also available at https://unpkg.com/primitiveprimer
 - mix(x, y, a) — Mix two numbers by factor a.
 - mixColors(hex1, hex2, mixPerc) — Mix two hex colors by percentage.
 
-##How to use pkit() functionality wrapper
+## How to use pkit() functionality wrapper
 ### The same functions without prototype manipulation!
 If you or your situation object to the extending or primitive prototypes, the same functionality can be found by the pkit wrapper that will be placed on global/window.
 Wrap your subject in pkit(\*) and the functions will be available from there.
