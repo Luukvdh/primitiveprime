@@ -1,3 +1,6 @@
+[![npm version](https://img.shields.io/npm/v/primitiveprimer.svg)](https://www.npmjs.com/package/primitiveprimer)
+[![npm downloads](https://img.shields.io/npm/dm/primitiveprimer.svg)](https://www.npmjs.com/package/primitiveprimer)
+
 # primitiveprimer
 
 Extend String, Array, Number, Object na Math with generally useful helpers, add a browser-safe version of node's path. Alternatively get all this functionality without defiling your prototypes in one handy wrapper pkit().
