@@ -1,13 +1,8 @@
 // src/primitives/object.ts
 declare type ObjectMethod = [string, (this: Record<string, any>, ...args: any[]) => any];
 declare type ObjectMethodTS = ObjectMethod & [string, <T, U extends T>(this: T) => U | boolean];
-import { Empty, NonEmpty } from "./global.js";
-import { isEmpty, p, AssertError } from "./index.js";
-const { assert, assertRoute } = p;
-const interfaces: Record<string, string[]> = {};
-export function addInterface(name: string, iface: string[]) {
-  interfaces[name] = iface;
-}
+import { Empty, NonEmpty, isEmpty, AssertError, assert, assertRoute } from "./polyfills.js";
+
 export const objectMethodsTS: ObjectMethodTS[] = [
   [
     "isObject",

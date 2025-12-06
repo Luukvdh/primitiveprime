@@ -1,6 +1,6 @@
 {
   "name": "primitiveprimer",
-  "version": "3.0.8",
+  "version": "3.0.9",
   "description": "Bluntly extend String, Array, Number, Object prototypes with useful methods, or use them as standalone utilities while leaving prototypes untouched",
   "type": "module",
   "sideEffects": true,
@@ -63,7 +63,7 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run build:main && npm run build:iife && npm run build:global && node bin/copy-minified.cjs",
+    "build": "npm run build:main && npm run build:iife && npm run build:global && node bin/copy-minified.cjs && powershell C:\\repo\\packages\\syncpublish.ps1",
     "build:main": "tsup src/index.ts --entry.primitiveprimer=src/index.ts --dts --format esm,cjs --sourcemap --out-dir dist --config tsup.main.config.ts",
     "build:iife": "tsup src/iife.ts --entry.primitiveprimer=src/iife.ts --format iife --global-name PrimitivePrimer --sourcemap --out-dir dist",
     "build:global": "tsup src/auto.ts --entry.primitiveprimer-global=src/auto.ts --format cjs,iife --global-name PrimitivePrimer --sourcemap --out-dir dist && node bin/rename-global.cjs",

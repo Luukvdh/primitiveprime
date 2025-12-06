@@ -1,14 +1,5 @@
-import { keys } from "ts-transformer-keys";
 import type { Pkit } from "./dist/primitiveprimer";
 
-export type NonEmpty = true & (string | any[] | Record<string, unknown> | number | boolean);
-/**
- * Represents all "empty" values.
- * - Arrays and strings always have length: 0.
- * - Objects have no keys, or all keys have values 0 or null.
- */
-export type Empty = false | (any[] & { length: 0 }) | (string & { length: 0 }) | Record<never, never> | { [P in keyof null]: T } | NonNullable<null> | NonNullable<unknown> | NonNullable<undefined>;
-export { NonEmpty, Empty };
 declare global {
   // Globals exposed by IIFE bundles
   /** Global utilities instance provided by the library. */

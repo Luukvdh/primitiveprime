@@ -1,8 +1,6 @@
-// src/primitives/string.ts
-import { NonEmpty } from "./global.js";
-import { p } from "./index.js";
+import { NonEmpty } from "./polyfills.js";
 
-const { assert, assertRoute } = p;
+import { assert, assertRoute } from "./polyfills.js";
 
 function assertIs<T, U extends T>(value: T, guard: (v: T) => v is U, message: string = "Type assertion failed"): asserts value is U {
   if (!guard(value)) {
