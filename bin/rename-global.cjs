@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const dist = path.resolve(__dirname, '..', 'dist');
+const dist = path.resolve(__dirname, "..", "dist");
 
 function rename(from, to) {
   const src = path.join(dist, from);
@@ -14,16 +14,14 @@ function rename(from, to) {
   }
 }
 
-
-
 // Keep CJS global name aligned
-rename('primitiveprimer-global.cjs', 'primitiveprimer.global.cjs');
-rename('primitiveprimer-global.cjs.map', 'primitiveprimer.global.cjs.map');
+rename("primitiveprimer-global.cjs", "primitiveprimer.global.cjs");
+rename("primitiveprimer-global.cjs.map", "primitiveprimer.global.cjs.map");
 
 // Rename non-global IIFE to desired filename
-rename('primitiveprimer.global.js', 'primitiveprimer.js');
-rename('primitiveprimer.global.js.map', 'primitiveprimer.js.map');
+rename("primitiveprimer.global.js", "primitiveprimer.js");
+rename("primitiveprimer.global.js.map", "primitiveprimer.js.map");
 
 // Rename IIFE global to desired filename
-rename('primitiveprimer-global.global.js', 'primitiveprimer.global.js');
-rename('primitiveprimer-global.global.js.map', 'primitiveprimer.global.js.map');
+rename("primitiveprimer-global.global.js", "primitiveprimer.global.js");
+rename("primitiveprimer-global.global.js.map", "primitiveprimer.global.js.map");

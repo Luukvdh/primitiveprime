@@ -1,16 +1,15 @@
-
 {
-"compilerOptions": {
-"target": "ES2023",
-"module": "NodeNext",
-"moduleResolution": "nodenext",
-"strict": true,
-"skipLibCheck": true,
-"declaration": true,
-"declarationMap": false,
-"esModuleInterop": true,
-"forceConsistentCasingInFileNames": true,
-},
-"lib": ["ES2023"],
-"include": ["src"]
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "strict": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "lib": ["ES2023"],
+  "include": ["src"]
 }

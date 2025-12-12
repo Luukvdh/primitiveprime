@@ -87,6 +87,10 @@ these are also available at https://unpkg.com/primitiveprimer
 - indexOfLowestNumber() — Return index of the lowest number in the array.
 - toTable() — Group-reduce objects by key or projection into table form.
 - seededShuffle(seed) — Shuffle array with pattern using a seed for reproducibility.
+- intersect(other) — Items present in both arrays.
+- difference(other) — Items present only in this array.
+- validateEach(validatorFn) — Keep valid items; replace invalids with null.
+- clearNil() — Remove null/undefined values and narrow the array.
 
 ### String
 
@@ -126,6 +130,8 @@ these are also available at https://unpkg.com/primitiveprimer
 - ellipsis(total) — Truncate with "..." to total width.
 - toNumber() — Extract a numeric value from the string.
 - toBoolean() — Parse boolean from common truthy/falsey words.
+- assertNonEmptyString() — Assert value is non-empty string; returns NonEmpty or false.
+- isNonEmty() — True if string is non-empty after trimming.
 
 ### Number
 
@@ -140,6 +146,15 @@ these are also available at https://unpkg.com/primitiveprimer
 - toTimeCode() — Convert seconds/number to a timecode string.
 - percentOf(total) — Calculate what percent this number is of total.
 - ratioOf(total) — Calculate what ratio this number is of total.
+- assertNrBetween(min?, max?) — Assert number within bounds.
+- isInteger() — True if integer.
+- isFinite() — True if finite (not NaN/Infinity).
+- isSafeInteger() — True if safe integer.
+- isPositive() — True if > 0.
+- isNegative() — True if < 0.
+- isNonNegative() — True if >= 0.
+- assertIsInteger() — Throw if not integer.
+- assertIsFinite() — Throw if not finite.
 
 ### Object (constructor)
 
@@ -158,6 +173,12 @@ these are also available at https://unpkg.com/primitiveprimer
 - ensureSchema(schema, opts?) — Ensure keys conform to schema; optional type coercion.
 - filterEntries(predicate) — Filter object entries by predicate.
 - merge(other, opts?) — Merge with another object; control array merge strategy.
+- isObject() — Type guard for plain object (not array).
+- assertHasKeys(...keys) — Assert object has required keys.
+- asType<T>() — Cast after validation.
+- isNonEmty() — True if all values are non-empty strings.
+- mapEmptyToFalseyKeyObje() — Map keys to booleans indicating empty values.
+- mapEmptyToFalseyValueArray() — Map values to booleans indicating empty values.
 
 ### PathShim
 

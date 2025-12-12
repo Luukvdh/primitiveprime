@@ -1,4 +1,5 @@
 class AssertError extends Error {
+  code = "ASSERT_FAILED" as const;
   info?: Record<string, unknown>;
   constructor(message: string, info?: Record<string, unknown>) {
     super(message);

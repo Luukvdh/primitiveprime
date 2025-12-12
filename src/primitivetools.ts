@@ -211,7 +211,7 @@ function createPrimeString(value: string): PrimeString {
           return current;
         },
       ];
-    })
+    }),
   ) as unknown as PrimeString;
 }
 
@@ -230,7 +230,7 @@ function createPrimeNumber(initial: number): PrimeNumber {
           return result;
         },
       ];
-    })
+    }),
   ) as unknown as PrimeNumber;
 }
 
@@ -248,7 +248,7 @@ function createPrimeArray<T extends any[]>(initial: T): PrimeArray<T> {
           return result;
         },
       ];
-    })
+    }),
   ) as unknown as PrimeArray<T>;
 }
 
@@ -303,7 +303,7 @@ function createPrimeObject<T extends Record<string, any>>(initial: T): PrimeObje
           return current;
         },
       ];
-    })
+    }),
   ) as unknown as PrimeObject;
 }
 

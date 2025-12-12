@@ -54,6 +54,14 @@ declare global {
     sum(): number;
     /** Average all numeric values in the array. */
     average(): number;
+    /** Return intersection with another array (items present in both). */
+    intersect(other: T[]): T[];
+    /** Return difference with another array (items present only in this). */
+    difference(other: T[]): T[];
+    /** Validate each item; replace invalids with null and keep valid items. */
+    validateEach(validatorFn: (item: T) => boolean): (T | null)[];
+    /** Remove null and undefined values, returning a narrowed array. */
+    clearNil(): T[];
     /** Return index of the highest number in the array. */
     indexOfHighestNumber(): number;
     /** Return index of the lowest number in the array. */
@@ -85,6 +93,10 @@ declare global {
   }
 
   interface String {
+    /** Assert this is a non-empty string; returns NonEmpty or false. */
+    assertNonEmptyString(): (string & NonEmpty) | false;
+    /** True if string is non-empty after trimming (type guard). */
+    isNonEmty(): this is string & NonEmpty;
     /** Replace the file extension with `ext`. */
     changeExtension(ext: string): string;
     /** Return the string reversed. */
@@ -170,6 +182,8 @@ declare global {
     toFixedNumber(decimals?: number): number;
     /** Check if number is between min and max (inclusive). */
     between(min: number, max: number): boolean;
+    /** Assert number is between `min` and `max` (type guard style). */
+    assertNrBetween(min?: number, max?: number): this is number;
     /** Clamp the number between min and max. */
     clamp(min: number, max: number): number;
     /** Run `fn` `n` times with index. */
@@ -182,6 +196,22 @@ declare global {
     percentOf(total: number): number;
     /** Calculate what ratio this number is of total. */
     ratioOf(total: number): number;
+    /** True if integer. */
+    isInteger(): this is number;
+    /** True if finite (not NaN/Infinity). */
+    isFinite(): this is number;
+    /** True if safe integer. */
+    isSafeInteger(): this is number;
+    /** True if > 0. */
+    isPositive(): this is number;
+    /** True if < 0. */
+    isNegative(): this is number;
+    /** True if >= 0. */
+    isNonNegative(): this is number;
+    /** Assert integer (throws on failure). */
+    assertIsInteger(): asserts this is number;
+    /** Assert finite (throws on failure). */
+    assertIsFinite(): asserts this is number;
   }
 
   interface ObjectConstructor {
@@ -197,6 +227,18 @@ declare global {
   }
 
   interface Object {
+    /** Type guard: is a plain object (not array). */
+    isObject(): this is Record<string, any>;
+    /** Assert object has provided keys. */
+    assertHasKeys<K extends string>(...keys: K[]): asserts this is Record<string, any> & Record<K, unknown>;
+    /** Cast after validation. */
+    asType<T>(): T;
+    /** True if all values are non-empty strings. */
+    isNonEmty(): this is Record<string, any> & Record<string, NonEmpty>;
+    /** Map: keys -> boolean flag if value is empty. */
+    mapEmptyToFalseyKeyObje(): Record<string, Boolean>;
+    /** Map: values -> boolean flag if value is empty. */
+    mapEmptyToFalseyValueArray(): Record<string, Boolean>;
     /** Return a new object with keys sorted by `sorterFn`. */
     sortKeys(sorterFn?: ((a: string, b: string) => number) | null): Record<string, any>;
     /** Shallow structural equality by keys and types. */
