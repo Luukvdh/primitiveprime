@@ -1,8 +1,13 @@
-export {};
 import type { Pkit } from "./dist/primitiveprimer";
+
+export type Empty = false | (any[] & { length: 0 }) | (string & { length: 0 }) | Record<never, never> | { [P in keyof null]: P } | NonNullable<null> | NonNullable<unknown> | NonNullable<undefined>;
+export type NonEmpty = string | any[] | Record<string, unknown> | number | boolean;
+
 declare global {
   // Globals exposed by IIFE bundles
+  /** Global utilities instance provided by the library. */
   var pkit: Pkit;
+  /** Apply prototype extensions to global objects. */
   var applyPrimitives: () => void;
 
   interface Array<T> {
@@ -52,9 +57,25 @@ declare global {
     sum(): number;
     /** Average all numeric values in the array. */
     average(): number;
+    /** Return intersection with another array (items present in both). */
+    intersect(other: T[]): T[];
+    /** Return difference with another array (items present only in this). */
+    difference(other: T[]): T[];
+    /** Validate each item; replace invalids with null and keep valid items. */
+    validateEach(validatorFn: (item: T) => boolean): (T | null)[];
+    /** Remove null and undefined values, returning a narrowed array. */
+    clearNil(): T[];
     /** Return index of the highest number in the array. */
     indexOfHighestNumber(): number;
     /** Return index of the lowest number in the array. */
+    indexOfLowestNumber(): number;
+    /** Group-reduce objects by key or projection. */
+    toTable(): Record<string, any[]>;
+    /** Shuffle array with pattern using a seed for reproducibility. */
+    seededShuffle(seed: number): T[];
+    /** index of highest number in array. */
+    indexOfHighestNumber(): number;
+    /** index of lowest number in array. */
     indexOfLowestNumber(): number;
     /** Filter with a type guard predicate and return narrowed array. */
     filterGuard<U extends T>(pred: (x: T) => x is U): U[];
@@ -72,17 +93,13 @@ declare global {
     tryAsStrings(this: unknown[]): string[] | null;
     /** Try narrowing as number[]; returns null if validation fails (safe pattern). */
     tryAsNumbers(this: unknown[]): number[] | null;
-    /** Group-reduce objects by key or projection. */
-    toTable(): Record<string, any[]>;
-    /** Shuffle array with pattern using a seed for reproducibility. */
-    seededShuffle(seed: number): T[];
-    /** index of highest number in array. */
-    indexOfHighestNumber(): number;
-    /** index of lowest number in array. */
-    indexOfLowestNumber(): number;
   }
 
   interface String {
+    /** Assert this is a non-empty string; returns NonEmpty or false. */
+    assertNonEmptyString(): (string & NonEmpty) | false;
+    /** True if string is non-empty after trimming (type guard). */
+    isNonEmty(): this is string & NonEmpty;
     /** Replace the file extension with `ext`. */
     changeExtension(ext: string): string;
     /** Return the string reversed. */
@@ -168,6 +185,8 @@ declare global {
     toFixedNumber(decimals?: number): number;
     /** Check if number is between min and max (inclusive). */
     between(min: number, max: number): boolean;
+    /** Assert number is between `min` and `max` (type guard style). */
+    assertNrBetween(min?: number, max?: number): this is number;
     /** Clamp the number between min and max. */
     clamp(min: number, max: number): number;
     /** Run `fn` `n` times with index. */
@@ -180,21 +199,49 @@ declare global {
     percentOf(total: number): number;
     /** Calculate what ratio this number is of total. */
     ratioOf(total: number): number;
+    /** True if integer. */
+    isInteger(): this is number;
+    /** True if finite (not NaN/Infinity). */
+    isFinite(): this is number;
+    /** True if safe integer. */
+    isSafeInteger(): this is number;
+    /** True if > 0. */
+    isPositive(): this is number;
+    /** True if < 0. */
+    isNegative(): this is number;
+    /** True if >= 0. */
+    isNonNegative(): this is number;
+    /** Assert integer (throws on failure). */
+    assertIsInteger(): asserts this is number;
+    /** Assert finite (throws on failure). */
+    assertIsFinite(): asserts this is number;
   }
 
   interface ObjectConstructor {
     /** Map object keys using `fn` into a new object. */
     keysMap(obj: Record<string, any>, fn: (k: string, v: any) => [string, any]): Record<string, any>;
     /** Map object values using `fn` into a new object. */
+    entriesMap(obj: Record<string, any>, fn: ([key, value]: [string, any]) => [string, any]): Record<string, any>;
     valuesMap(obj: Record<string, any>, fn: (v: any, k: string) => any): Record<string, any>;
     /** Parse specified keys on `this` object and return new object. */
-    entriesMap(obj: Record<string, any>, fn: ([key, value]: [string, any]) => [string, any]): Record<string, any>;
     parseKeys(this: Record<string, any>, ...keys: string[]): Record<string, any>;
     /** Shallow-merge `source` into `target` and return the result. */
     fill<T extends Record<string, any>, U extends Record<string, any>>(target: T, source: U): T & U;
   }
 
   interface Object {
+    /** Type guard: is a plain object (not array). */
+    isObject(): this is Record<string, any>;
+    /** Assert object has provided keys. */
+    assertHasKeys<K extends string>(...keys: K[]): asserts this is Record<string, any> & Record<K, unknown>;
+    /** Cast after validation. */
+    asType<T>(): T;
+    /** True if all values are non-empty strings. */
+    isNonEmty(): this is Record<string, any> & Record<string, NonEmpty>;
+    /** Map: keys -> boolean flag if value is empty. */
+    mapEmptyToFalseyKeyObje(): Record<string, Boolean>;
+    /** Map: values -> boolean flag if value is empty. */
+    mapEmptyToFalseyValueArray(): Record<string, Boolean>;
     /** Return a new object with keys sorted by `sorterFn`. */
     sortKeys(sorterFn?: ((a: string, b: string) => number) | null): Record<string, any>;
     /** Shallow structural equality by keys and types. */
@@ -205,8 +252,6 @@ declare global {
     pick(...keys: string[]): Record<string, any>;
     /** Fill missing keys from source without overwriting existing. */
     complement(src: Record<string, any>): Record<string, any>;
-    /** Remove empty string/null/undefined entries. */
-    clean(): Record<string, any>;
     /** Ensure keys conform to schema; optional type coercion. */
     ensureSchema(schema: Record<string, any>, opts?: { coerce?: boolean }): Record<string, any>;
     /** Filter object entries by predicate. */
